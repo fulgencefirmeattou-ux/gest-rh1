@@ -1,0 +1,180 @@
+================================================================================
+                    STRUCTURE DU PROJET - GESTION RH
+================================================================================
+
+📁 RACINE DU PROJET (c:\xampp\htdocs\gestion_rh)
+├── 📄 artisan                          # Ligne de commande Laravel
+├── 📄 composer.json                    # Dépendances PHP
+├── 📄 package.json                     # Dépendances JavaScript
+├── 📄 phpunit.xml                      # Configuration des tests
+├── 📄 vite.config.js                   # Configuration Vite
+├── 📄 README.md                        # Documentation du projet
+│
+├── 📁 app/                             # Code applicatif principal
+│   ├── 📁 Http/
+│   │   ├── Controllers/                # Contrôleurs (logique métier)
+│   │   └── Middleware/                 # Middlewares (validation, authentification)
+│   │
+│   ├── 📁 Models/                      # Modèles Eloquent (base de données)
+│   │   ├── Absence.php
+│   │   ├── BulletinItem.php
+│   │   ├── BulletinPaie.php
+│   │   ├── Candidature.php
+│   │   ├── Contrat.php
+│   │   ├── ContratPrime.php
+│   │   ├── DemandeConge.php
+│   │   ├── Departement.php
+│   │   ├── Employe.php
+│   │   ├── Entretien.php
+│   │   ├── EtapeRecrutement.php
+│   │   ├── Evaluation.php
+│   │   ├── HistoriqueConge.php
+│   │   ├── Presence.php
+│   │   ├── Recrutement.php
+│   │   ├── Service.php
+│   │   └── User.php
+│   │
+│   ├── 📁 Mail/                        # Emails
+│   │   └── ContactAdminMail.php
+│   │
+│   ├── 📁 Notifications/               # Notifications
+│   │   └── EmployeCredentials.php
+│   │
+│   └── 📁 Providers/                   # Service Providers
+│       └── AppServiceProvider.php
+│
+├── 📁 bootstrap/                       # Initialisation application
+│   ├── app.php
+│   ├── providers.php
+│   └── 📁 cache/
+│       ├── packages.php
+│       └── services.php
+│
+├── 📁 config/                          # Fichiers de configuration
+│   ├── app.php                         # Configuration générale
+│   ├── auth.php                        # Authentification
+│   ├── cache.php                       # Cache
+│   ├── database.php                    # Base de données
+│   ├── dompdf.php                      # PDF
+│   ├── filesystems.php                 # Système de fichiers
+│   ├── logging.php                     # Logs
+│   ├── mail.php                        # Email
+│   ├── queue.php                       # Files d'attente
+│   ├── services.php                    # Services tiers
+│   ├── session.php                     # Sessions
+│   └── sidebars.php                    # Barres latérales
+│
+├── 📁 database/                        # Migration & seeders
+│   ├── 📁 factories/
+│   │   └── UserFactory.php             # Factory pour tests
+│   │
+│   ├── 📁 migrations/                  # Migrations base de données
+│   │   ├── 0001_01_01_000000_create_users_table.php
+│   │   ├── 0001_01_01_000001_create_cache_table.php
+│   │   ├── 0001_01_01_000002_create_jobs_table.php
+│   │   ├── 2025_10_29_154539_add_photo_to_users_table.php
+│   │   ├── 2025_11_05_142308_create_departements_table.php
+│   │   ├── 2025_11_05_142346_create_services_table.php
+│   │   ├── 2025_11_05_142619_create_employes_table.php
+│   │   ├── 2025_11_05_182708_add_responsable_to_departements_table.php
+│   │   ├── 2025_11_05_185822_modify_responsable_nullable_in_departements_table.php
+│   │   └── 2025_11_05_190257_remove_responsable_from_departements_table.php
+│   │   └── ...
+│   │
+│   └── 📁 seeders/                     # Data seeders
+│       └── ...
+│
+├── 📁 public/                          # Fichiers publics (point d'entrée)
+│   ├── index.php                       # Point d'entrée application
+│   ├── robots.txt
+│   ├── 📁 assets/
+│   │   ├── 📁 css/
+│   │   │   └── structure.txt (CE FICHIER)
+│   │   └── 📁 images/
+│
+├── 📁 resources/                       # Ressources (non compilées)
+│   ├── 📁 css/                         # Feuilles de style
+│   ├── 📁 js/                          # JavaScript source
+│   └── 📁 views/                       # Templates Blade
+│
+├── 📁 routes/                          # Définitions des routes
+│   ├── web.php                         # Routes web
+│   └── console.php                     # Commandes console
+│
+├── 📁 storage/                         # Fichiers d'application
+│   ├── 📁 app/                         # Fichiers uploadés
+│   ├── 📁 framework/                   # Fichiers framework
+│   └── 📁 logs/                        # Fichiers de log
+│
+├── 📁 tests/                           # Tests automatisés
+│   ├── TestCase.php
+│   ├── 📁 Feature/                     # Tests fonctionnels
+│   └── 📁 Unit/                        # Tests unitaires
+│
+└── 📁 vendor/                          # Dépendances composer (NE PAS MODIFIER)
+    ├── autoload.php
+    ├── barryvdh/
+    ├── bin/
+    ├── laravel/
+    ├── symfony/
+    └── ... (nombreux autres packages)
+
+
+================================================================================
+                        MODULES PRINCIPAUX
+================================================================================
+
+🔷 GESTION DES RESSOURCES HUMAINES
+   - Employés (Employe.php)
+   - Contrats (Contrat.php, ContratPrime.php)
+   - Congés (DemandeConge.php, HistoriqueConge.php)
+   - Absences (Absence.php)
+   - Présences (Presence.php)
+
+🔷 GESTION ORGANISATIONNELLE
+   - Départements (Departement.php)
+   - Services (Service.php)
+
+🔷 GESTION PAIE & BULLETINS
+   - Bulletins de paie (BulletinPaie.php)
+   - Éléments de bulletin (BulletinItem.php)
+
+🔷 GESTION DU RECRUTEMENT
+   - Recrutement (Recrutement.php)
+   - Candidatures (Candidature.php)
+   - Étapes de recrutement (EtapeRecrutement.php)
+
+🔷 GESTION DU PERSONNEL
+   - Évaluations (Evaluation.php)
+   - Entretiens (Entretien.php)
+
+🔷 AUTHENTIFICATION & UTILISATEURS
+   - Utilisateurs (User.php)
+
+
+================================================================================
+                       TECHNOLOGIES UTILISÉES
+================================================================================
+
+Backend:        Laravel (PHP framework)
+Frontend:       Blade (moteur de templating), JavaScript (Vite)
+Base de données: MySQL/MariaDB
+CSS:            Sass/SCSS
+Build:          Vite
+ORM:            Eloquent (Laravel)
+Gestion de dépôt: Composer, NPM
+
+
+================================================================================
+                       POINTS D'ENTRÉE
+================================================================================
+
+Web:            /public/index.php
+Commandes:      php artisan (console)
+Tests:          phpunit
+Build:          npm run build / vite
+
+
+================================================================================
+Généré le: 14/01/2026
+================================================================================

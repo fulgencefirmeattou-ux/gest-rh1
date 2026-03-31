@@ -101,19 +101,3 @@
         </ul>
     </div>
 </li>
-<li class="side-nav-item">
-    <a data-bs-toggle="collapse" href="#sidebarRecrutement" class="side-nav-link">
-        <i class="ri-folder-user-line"></i>
-        <span>Recrutements</span> 
-        <span class="menu-arrow"></span>
-    </a>
-
-    <div class="collapse" id="sidebarRecrutement">
-        <ul class="side-nav-second-level">
-            <li><a href="{{ route('recrutement.create') }}">Créer une offre</a></li>
-            <li><a href="{{ route('recrutement.liste') }}">Liste des offres</a></li>
-            {{-- <li><a href="{{ route('contrats.create') }}">Créer un contrat</a></li>
-            <li><a href="{{ route('contrats.index') }}">Liste des contrats</a></li> --}}
-        </ul>
-    </div>
-</li>

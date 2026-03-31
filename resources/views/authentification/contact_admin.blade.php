@@ -112,7 +112,7 @@
 
     <footer class="footer footer-alt fw-medium">
         <span class="text-dark">
-            <script>document.write(new Date().getFullYear())</script> © Velonic - Theme by Techzaa
+            Firme informatique <script>document.write(new Date().getFullYear())</script> © Firme Attou Co
         </span>
     </footer>
     <!-- Vendor js -->

@@ -27,8 +27,6 @@
                             <th>Type de contrat</th>
                             <th>Date d'embauche</th>
                             <th>Date de fin de contrat</th> --}}
-                            <th>Date d'enregistrement</th>
-                            {{-- <th>Dernière connexion</th> --}}
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -46,8 +44,6 @@
                                 <td>{{ $employe->type_contrat ?? '-' }}</td> --}}
                                 {{-- <td>{{ $employe->date_embauche ? $employe->date_embauche->format('d/m/Y') : '-' }}</td>
                                 <td>{{ $employe->date_fin ? $employe->date_fin->format('d/m/Y') : '-' }}</td> --}}
-                                <td>{{ $employe->created_at->format('d/m/Y') }}</td>
-                                {{-- <td>{{ $employe->user->date_connexion?->format('d/m/Y') ?? '-' }}</td> --}}
                                 {{-- {{ route('users.voir', $user->id) }} --}}
                                 <td>  <a href="{{ route('employe.voir', $employe->id) }}" class="tabledit-edit-button btn btn-success active" style="float: none;">
                                    <span class="mdi mdi-pencil"></span>

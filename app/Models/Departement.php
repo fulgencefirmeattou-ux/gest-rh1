@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 
 class Departement extends Model
 {
     //
 
     protected $fillable = [
-    'nom', 
+    'nom',
     'description',
     'responsable_id',
     'date_creation',
@@ -26,9 +27,9 @@ class Departement extends Model
         return $this->hasMany(Service::class);
     }
 
-        public function responsable()
+    public function responsable()
     {
-        return $this->belongsTo(Employe::class, 'responsable_id');
+        return $this->belongsTo(User::class, 'responsable_id');
     }
 
      public function employes()
@@ -37,7 +38,7 @@ class Departement extends Model
             Employe::class,
             Service::class,
             'departement_id', // FK dans services
-            'service_id',     // FK dans employes
+            //'service_id',     // FK dans employes
             'id',
             'id'
         );

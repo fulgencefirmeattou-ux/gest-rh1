@@ -388,7 +388,7 @@
                 <div class="page-title">
                     <div class="row">
                         <div class="col-12 col-md-6 order-md-1 order-last">
-                            <h3>Checkout Page</h3>
+                            <h3>Checkout</h3>
                             <p class="text-subtitle text-muted">A page for user to checkout</p>
                         </div>
                         <div class="col-12 col-md-6 order-md-2 order-first">

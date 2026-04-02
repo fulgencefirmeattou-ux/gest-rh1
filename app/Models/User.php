@@ -6,19 +6,21 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Traits\HasRoles;
 use App\Models\Employe;
 use App\Models\Service;
 use App\Models\Departement;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasRoles;
 
     protected $fillable = [
         // 'matricule',
         // 'nom',
         // 'prenom',
         'employe_id',
+        'name',
         'email',
         // 'photo',
         // 'phone',

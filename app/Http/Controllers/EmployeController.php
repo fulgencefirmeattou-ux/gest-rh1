@@ -182,8 +182,8 @@ class EmployeController extends Controller
             'must_change_password' => true,
         ]);
 
-        $user->employe()->associate($employe);
-        $user->save();
+        $employe->user_id = $user->id;
+        $employe->save();
 
         // 🔥 ENVOI DU MAIL DE CONNEXION
         $user->notify(new EmployeCredentials($matricule, $passwordTemp));

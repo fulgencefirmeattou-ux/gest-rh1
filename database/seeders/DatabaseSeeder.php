@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             PresenceAbsenceSeeder::class,// 7. Présences + Absences
             DemandeCongeSeeder::class,   // 8. Demandes de congé + Historique
             BulletinPaieSeeder::class,   // 9. Bulletins de paie + Items
+            PermissionSeeder::class,     // 10. Rôles & Permissions (Spatie)
         ]);
     }
 }

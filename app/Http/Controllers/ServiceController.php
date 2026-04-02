@@ -26,8 +26,7 @@ class ServiceController extends Controller
      */
     public function create(Request $request)
     {
-        $employes = Employe::where('service_id', $service->id)->get();
-          $validator=Validator::make($request->all(),[
+        $validator=Validator::make($request->all(),[
             'nom'=>'required',
             'description'=>'nullable',
             'responsable_id'=>'nullable|exists:employes,id',

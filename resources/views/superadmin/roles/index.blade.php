@@ -43,7 +43,7 @@
 
                                     <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;">
                                         @foreach($role->permissions as $permission)
-                                            <div>{{ $permission->name }}</div>
+                                            <div  class="badge bg-info text-dark">{{ $permission->name }}</div>
                                         @endforeach
                                     </div>
                                 </td>

@@ -33,6 +33,9 @@ class PosteController extends Controller
         return redirect()->route('postes.index')->with('success', 'Poste créé avec succès.');
     }
 
+   
+   
+
     public function show(string $id)
     {
         $poste = Poste::findOrFail($id);

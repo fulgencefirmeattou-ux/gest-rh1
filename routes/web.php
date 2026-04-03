@@ -62,6 +62,12 @@ Route::resource('type_contrats', TypeContratController::class);
 Route::resource('postes', PosteController::class);
 
 
+// ---------------------------------------------------------------
+// EMPLYÉS
+// ---------------------------------------------------------------
+
+Route::resource('employes', EmployeController::class);
+
 
 
 

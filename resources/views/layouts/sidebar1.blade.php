@@ -20,19 +20,30 @@
                 </a>
             </li>
             <li class="side-nav-item">
-                    <a href="{{ route('permissions.index') }}" class="side-nav-link">
+                <li class="side-nav-item">
+                       <a href="{{ route('departements.index') }}" class="side-nav-link">
+                           <i class="ri-calendar-line"></i>
+                           <span>Départements</span> 
+                           {{-- <span class="menu-arrow"></span> --}}
+                       </a>
+               
+               </li>
+
+               <li class="side-nav-item">
+                        <a href="{{ route('postes.index') }}" class="side-nav-link">
+                            <i class="ri-calendar-line"></i>
+                            <span>Postes</span> 
+                            {{-- <span class="menu-arrow"></span> --}}
+                        </a>
+                </li>
+
+                 <li class="side-nav-item">
+                    <a href="{{ route('type_contrats.index') }}" class="side-nav-link">
                         <i class="ri-calendar-line"></i>
-                        <span>Permissions</span> 
+                        <span>Types de contrats</span> 
                         {{-- <span class="menu-arrow"></span> --}}
                     </a>
-            </li>
             
-            <li class="side-nav-item">
-                    <a href="{{ route('roles.index') }}" class="side-nav-link">
-                        <i class="ri-calendar-line"></i>
-                        <span>Rôles</span> 
-                        {{-- <span class="menu-arrow"></span> --}}
-                    </a>
             </li>
 
             <li class="side-nav-item">
@@ -43,31 +54,38 @@
                     </a>
             </li>
 
-             <li class="side-nav-item">
-                    <a href="{{ route('departements.index') }}" class="side-nav-link">
+                <li class="side-nav-item">
+                    <a href="{{ route('roles.index') }}" class="side-nav-link">
                         <i class="ri-calendar-line"></i>
-                        <span>Départements</span> 
+                        <span>Rôles</span> 
                         {{-- <span class="menu-arrow"></span> --}}
                     </a>
-            
-            </li>
-
-            <li class="side-nav-item">
-                    <a href="{{ route('type_contrats.index') }}" class="side-nav-link">
-                        <i class="ri-calendar-line"></i>
-                        <span>Types de contrats</span> 
-                        {{-- <span class="menu-arrow"></span> --}}
-                    </a>
-            
-            </li>
+                </li>
 
                 <li class="side-nav-item">
-                        <a href="{{ route('postes.index') }}" class="side-nav-link">
-                            <i class="ri-calendar-line"></i>
-                            <span>Postes</span> 
-                            {{-- <span class="menu-arrow"></span> --}}
-                        </a>
+                    <a href="{{ route('employes.index') }}" class="side-nav-link">
+                        <i class="ri-calendar-line"></i>
+                        <span>Employés</span> 
+                        {{-- <span class="menu-arrow"></span> --}}
+                    </a>
                 </li>
+
+                <li class="side-nav-item">
+
+                    <a href="{{ route('permissions.index') }}" class="side-nav-link">
+                        <i class="ri-calendar-line"></i>
+                        <span>Permissions</span> 
+                        {{-- <span class="menu-arrow"></span> --}}
+                    </a>
+                </li>
+            
+         
+
+            
+
+           
+
+                
          
             {{-- @switch(auth()->user()->sidebarRole())
                 @case('employe')

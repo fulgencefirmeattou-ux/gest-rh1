@@ -6,66 +6,51 @@ use Illuminate\Database\Eloquent\Model;
 
 class Employe extends Model
 {
-    //
-    protected $fillable = [
-        'matricule', 
-        'nom', 
-        'prenom', 
+        protected $fillable = [
+        'matricule',
+        'nom',
+        'prenom',
+        'civilite',
+        'nationalite',
+        'situation_matrimoniale',
+        'nombre_enfants',
+        'telephone',
         'email',
-        'phone',
-        'photo',
-        // 'user_id', 
-        'service_id', 
-        'poste', 
-        'date_embauche', 
-        'salaire',
-        'type_contrat',
-        'duree',
-        'date_fin'
+        'date_naissance',
+        'adresse',
+        'photo_profil',
+        'type_contrat_id',
+        'departement_id',
+        'poste_id',
+        'user_id',
+        'date_embauche',
     ];
+
+    protected $dates = [
+        'date_naissance',
+        'date_embauche',
+    ];
+
+
+
+        public function departement()
+    {
+        return $this->belongsTo(Departement::class);
+    }
+
+    public function poste()
+    {
+        return $this->belongsTo(Poste::class);
+    }
+
+    public function typeContrat()
+    {
+        return $this->belongsTo(TypeContrat::class);
+    }
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
-    }
+        return $this->belongsTo(User::class);
+}
 
-    
-
-    public function service()
-    {
-        return $this->belongsTo(Service::class);
-    }
-
-    protected $casts = [
-        'date_embauche' => 'date',
-        'date_fin' => 'date',
-    ];
-
-    public function contrats(){ 
-        return $this->hasMany(Contrat::class); 
-    }
-    public function contratActif(){ 
-        return $this->hasOne(Contrat::class)->where('statut','actif'); 
-    }
-    public function presences(){ 
-        return $this->hasMany(Presence::class); 
-    }
-    public function bulletins(){ 
-        return $this->hasMany(BulletinPaie::class); 
-    }
-
-    public function getBadgeCodeAttribute()
-    {
-        return 'EMP-' . str_pad($this->id, 5, '0', STR_PAD_LEFT);
-    }
-
-    public function departementResponsable()
-    {
-        return $this->hasOne(Departement::class, 'responsable_id');
-    }
-        public function serviceResponsable()
-    {
-        return $this->hasOne(Service::class, 'responsable_id');     
-
-    }
 }

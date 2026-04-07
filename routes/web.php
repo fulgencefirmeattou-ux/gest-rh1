@@ -43,6 +43,9 @@ Route::resource('roles', RoleController::class);
 // ---------------------------------------------------------------
 
 Route::resource('utilisateurs', UserController::class);
+Route::get('utilisateurs-corbeille', [UserController::class, 'trashed'])->name('utilisateurs.trashed');
+Route::post('utilisateurs/{id}/restore', [UserController::class, 'restore'])->name('utilisateurs.restore');
+Route::delete('utilisateurs/{id}/force-delete', [UserController::class, 'forceDelete'])->name('utilisateurs.forceDelete');
 
 
 
@@ -67,6 +70,9 @@ Route::resource('postes', PosteController::class);
 // ---------------------------------------------------------------
 
 Route::resource('employes', EmployeController::class);
+Route::get('employes-corbeille', [EmployeController::class, 'trashed'])->name('employes.trashed');
+Route::post('employes/{id}/restore', [EmployeController::class, 'restore'])->name('employes.restore');
+Route::delete('employes/{id}/force-delete', [EmployeController::class, 'forceDelete'])->name('employes.forceDelete');
 
 
 

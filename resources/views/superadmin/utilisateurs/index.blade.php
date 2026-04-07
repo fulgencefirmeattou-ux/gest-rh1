@@ -4,8 +4,13 @@
 
 <section class="container mt-3">
 
-    <h2 class="mb-4 text-start">Liste des employés</h2>
-    <a href="{{ route('utilisateurs.create') }}" class="btn btn-primary mb-3">Créer un utilisateur</a>
+    <h2 class="mb-4 text-start">Liste des utilisateurs</h2>
+    <div class="d-flex justify-content-between mb-3">
+        <a href="{{ route('utilisateurs.create') }}" class="btn btn-primary">Créer un utilisateur</a>
+        <a href="{{ route('utilisateurs.trashed') }}" class="btn btn-outline-secondary">
+            <span class="mdi mdi-delete-restore"></span> Corbeille
+        </a>
+    </div>
         @if(session('success'))
             <div class="alert alert-success">{{ session('success') }}</div>
         @endif
@@ -43,7 +48,7 @@
                                     <form action="{{ route('utilisateurs.destroy', $user->id) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')"><span class="mdi mdi-trash-can"></span></button>
+                                        <button type="submit" class="btn btn-sm btn-outline-warning" onclick="return confirm('Archiver cet utilisateur ?')"><span class="mdi mdi-archive"></span></button>
                                     </form>
                                 </td>
                             </tr>

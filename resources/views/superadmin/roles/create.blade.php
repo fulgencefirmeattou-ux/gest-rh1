@@ -28,7 +28,7 @@
 
                     <div class="mb-3">
                         <label for="name" class="form-label">Nom du rôle</label>
-                        <input type="text" name="name" id="name" class="form-control" value="{{ old('name') }}" required>
+                        <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" required>
                         @error('name')
                             <small class="text-danger">{{ $message }}</small>
                         @enderror

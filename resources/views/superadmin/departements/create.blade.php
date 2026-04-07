@@ -12,6 +12,15 @@
         @if(session('error'))
             <div class="alert alert-danger">{{ session('error') }}</div>
         @endif
+        @if($errors->any())
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
         <form action="{{ route('departements.store') }}" method="POST">
             @csrf
             <div class="mb-3">
@@ -24,12 +33,13 @@
             </div>
                 <div class="mb-3">
                     <label for="responsable_id" class="form-label">Responsable</label>
-                    <select name="responsable_id" id="responsable_id" class="form-control">
+                    <select name="responsable_id" id="responsable_id" class="form-control @error('responsable_id') is-invalid @enderror">
                         <option value="">Aucun</option>
                         @foreach($users as $user)
                             <option value="{{ $user->id }}" {{ old('responsable_id') == $user->id ? 'selected' : '' }}>{{ $user->name }}</option>
                         @endforeach
                     </select>
+                    @error('responsable_id')<small class="text-danger">{{ $message }}</small>@enderror
                 </div>
             
             <button type="submit" class="btn btn-primary">Créer</button>

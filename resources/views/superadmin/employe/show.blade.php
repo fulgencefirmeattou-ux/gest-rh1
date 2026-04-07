@@ -47,7 +47,7 @@
                 </tr>
                 <tr>
                     <th>Date de naissance</th>
-                    <td>{{ $employe->date_naissance ? $employe->date_naissance->format('d/m/Y') : '—' }}</td>
+                    <td>{{ $employe->date_naissance ? \Carbon\Carbon::parse($employe->date_naissance)->format('d/m/Y') : '—' }}</td>
                 </tr>
                 <tr>
                     <th>Email</th>
@@ -75,7 +75,8 @@
                 </tr>
                 <tr>
                     <th>Date d'embauche</th>
-                    {{-- <td>{{ $employe->date_embauche ? $employe->date_embauche->format('d/m/Y') : '—' }}</td> --}}
+                    <td>{{ $employe->date_embauche ? \Carbon\Carbon::parse($employe->date_embauche)->format('d/m/Y') : '—' }}</td>
+
                 </tr>
                 <tr>
                     <th>Créé le</th>

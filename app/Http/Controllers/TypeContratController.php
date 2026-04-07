@@ -23,6 +23,9 @@ class TypeContratController extends Controller
         $request->validate([
             'name'        => 'required|string|max:255|unique:type_contrats,name',
             'description' => 'nullable|string|max:255',
+        ], [
+            'name.required' => 'Le nom du type de contrat est obligatoire.',
+            'name.unique'   => 'Ce type de contrat existe déjà.',
         ]);
 
         TypeContrat::create([
@@ -52,6 +55,9 @@ class TypeContratController extends Controller
         $request->validate([
             'name'        => 'required|string|max:255|unique:type_contrats,name,' . $id,
             'description' => 'nullable|string|max:255',
+        ], [
+            'name.required' => 'Le nom du type de contrat est obligatoire.',
+            'name.unique'   => 'Ce type de contrat existe déjà.',
         ]);
 
         $type_contrat->update([

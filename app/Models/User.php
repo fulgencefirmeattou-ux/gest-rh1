@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
@@ -13,24 +14,25 @@ use App\Models\Departement;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasRoles;
+    use HasFactory, Notifiable, HasRoles, SoftDeletes;
 
     protected $fillable = [
-        // 'matricule',
-        // 'nom',
-        // 'prenom',
-        'employe_id',
-        'name',
+        'nom',
+        'prenom',
         'email',
-        // 'photo',
-        // 'phone',
-        'login',
+        'email_verified_at',
         'password',
         'role',
-        // 'must_change_password',
+        'login',
+        'employe_id',
         'date_creation',
         'date_connexion',
     ];
+
+    public function getNameAttribute(): string
+    {
+        return $this->nom . ' ' . $this->prenom;
+    }
 
     protected $hidden = [
         'password',
@@ -38,8 +40,9 @@ class User extends Authenticatable
     ];
 
     protected $casts = [
-        'date_creation' => 'datetime',
-        'date_connexion' => 'datetime',
+        'email_verified_at' => 'datetime',
+        'date_creation'     => 'datetime',
+        'date_connexion'    => 'datetime',
     ];
 
      public function employe()
@@ -52,7 +55,7 @@ class User extends Authenticatable
     // }
 
 
-    
+
     // =======================
     // RÔLES SYSTÈME
     // =======================
@@ -96,7 +99,7 @@ class User extends Authenticatable
         }
 
         return Departement::where('responsable_id', $this->employe_id)->exists();
-          
+
     }
 
     // =======================

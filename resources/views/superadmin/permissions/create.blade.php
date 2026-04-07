@@ -10,14 +10,23 @@
                 @if(session('success'))
                     <div class="alert alert-success">{{ session('success') }}</div>
                 @endif
+                @if($errors->any())
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 
                 <form action="{{ route('permissions.store') }}" method="POST" class="bg-white p-4 rounded shadow-sm">
                     @csrf
 
                     <div class="mb-3">
-                        <label for="nom" class="form-label">Nom de la permission</label>
-                        <input type="text" name="nom" id="nom" class="form-control" value="{{ old('nom') }}" required>
-                        @error('nom')
+                        <label for="name" class="form-label">Nom de la permission</label>
+                        <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" required>
+                        @error('name')
                             <small class="text-danger">{{ $message }}</small>
                         @enderror
                     </div>

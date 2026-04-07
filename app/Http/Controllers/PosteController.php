@@ -23,6 +23,9 @@ class PosteController extends Controller
         $request->validate([
             'name'        => 'required|string|max:255|unique:postes,name',
             'description' => 'nullable|string|max:255',
+        ], [
+            'name.required' => 'Le nom du poste est obligatoire.',
+            'name.unique'   => 'Ce nom de poste existe déjà.',
         ]);
 
         Poste::create([
@@ -33,8 +36,8 @@ class PosteController extends Controller
         return redirect()->route('postes.index')->with('success', 'Poste créé avec succès.');
     }
 
-   
-   
+
+
 
     public function show(string $id)
     {
@@ -55,6 +58,9 @@ class PosteController extends Controller
         $request->validate([
             'name'        => 'required|string|max:255|unique:postes,name,' . $id,
             'description' => 'nullable|string|max:255',
+        ], [
+            'name.required' => 'Le nom du poste est obligatoire.',
+            'name.unique'   => 'Ce nom de poste existe déjà.',
         ]);
 
         $poste->update([

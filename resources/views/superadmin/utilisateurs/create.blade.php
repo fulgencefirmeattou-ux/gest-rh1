@@ -15,32 +15,43 @@
         <form action="{{ route('utilisateurs.store') }}" method="POST">
             @csrf
             <div class="mb-3">
-                <label for="name" class="form-label">Nom et Prénoms</label>
-                <input type="text" name="name" id="name" class="form-control" value="{{ old('name') }}" required>
+                <label for="nom" class="form-label">Nom</label>
+                <input type="text" name="nom" id="nom" @error('nom') is-invalid @enderror class="form-control" value="{{ old('nom') }}" required>
+                @error('nom')<small class="text-danger">{{ $message }}</small>@enderror
+            </div>
+
+            <div class="mb-3">
+                <label for="prenom" class="form-label">Prénom</label>
+                <input type="text" name="prenom" id="prenom" @error('prenom') is-invalid @enderror class="form-control" value="{{ old('prenom') }}" required>
+                @error('prenom')<small class="text-danger">{{ $message }}</small>@enderror
             </div>
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
-                <input type="email" name="email" id="email" class="form-control" value="{{ old('email') }}" required>
+                <input type="email" name="email" id="email" @error('email') is-invalid @enderror class="form-control" value="{{ old('email') }}" required>
+                @error('email')<small class="text-danger">{{ $message }}</small>@enderror
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Mot de passe</label>
-                <input type="password" name="password" id="password" class="form-control" required>
+                <input type="password" name="password" id="password" @error('password') is-invalid @enderror class="form-control" required>
+                @error('password')<small class="text-danger">{{ $message }}</small>@enderror
             </div>
 
             <div class="mb-3">
                 <label for="role" class="form-label">Rôle</label>
-                <select name="role" id="role" class="form-control" required>
-                    <option value="employe">Employé</option>
-                    <option value="admin">Administrateur</option>
-                    <option value="rh">Ressources Humaines</option>
-                    <option value="dg">Directeur Général</option>
-                    <option value="responsable_service">Responsable de Service</option>
+                <select name="role" id="role" class="form-control @error('role') is-invalid @enderror" required>
+                    <option value="" disabled selected>-- Sélectionner un rôle --</option>
+                    @foreach($roles as $role)
+                        <option value="{{ $role->name }}" {{ old('role') == $role->name ? 'selected' : '' }}>
+                            {{ $role->name }}
+                        </option>
+                    @endforeach
                 </select>
+                @error('role')<small class="text-danger">{{ $message }}</small>@enderror
             </div>
             <button type="submit" class="btn btn-primary">Créer</button>
             </form>
     </div>
-    
+
 </section>
 
 @endsection

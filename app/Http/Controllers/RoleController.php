@@ -36,8 +36,9 @@ class RoleController extends Controller
         //stocker un nouveau rôle avec les permissions associées
         $request->validate([
             'name' => 'required|string|max:255|unique:roles,name',
-            
-            
+        ], [
+            'name.required' => 'Le nom du rôle est obligatoire.',
+            'name.unique'   => 'Ce rôle existe déjà.',
         ]);
         $role = Role::create(['name' => $request->name, 'guard_name' => 'web']);
         $role->syncPermissions($request->permissions);
@@ -70,6 +71,9 @@ class RoleController extends Controller
         //
         $request->validate([
             'name' => 'required|string|max:255|unique:roles,name,' . $id,
+        ], [
+            'name.required' => 'Le nom du rôle est obligatoire.',
+            'name.unique'   => 'Ce rôle existe déjà.',
         ]);
         $role = Role::findOrFail($id);
         $role->update(['name' => $request->name, 'guard_name' => 'web']);

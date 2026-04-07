@@ -11,38 +11,51 @@
                 @if(session('success'))
                     <div class="alert alert-success">{{ session('success') }}</div>
                 @endif
+                @if($errors->any())
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 
                 <form action="{{ route('utilisateurs.update', $user->id) }}" method="POST" class="bg-white p-4 rounded shadow-sm">
                     @csrf
                     @method('PUT')
 
                     <div class="mb-3">
-                        <label for="name" class="form-label">Nom</label>
-                        <input type="text" name="name" id="name" class="form-control" value="{{ old('name', $user->name) }}" required>
-                        @error('name')
-                            <small class="text-danger">{{ $message }}</small>   
-                        @enderror
+                        <label for="nom" class="form-label">Nom</label>
+                        <input type="text" name="nom" id="nom" class="form-control @error('nom') is-invalid @enderror" value="{{ old('nom', $user->nom) }}" required>
+                        @error('nom')<small class="invalid-feedback">{{ $message }}</small>@enderror
+                    </div>
+                    <div class="mb-3">
+                        <label for="prenom" class="form-label">Prénom</label>
+                        <input type="text" name="prenom" id="prenom" class="form-control @error('prenom') is-invalid @enderror" value="{{ old('prenom', $user->prenom) }}" required>
+                        @error('prenom')<small class="invalid-feedback">{{ $message }}</small>@enderror
+                    </div>
+                    <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
-                        <input type="email" name="email" id="email" class="form-control" value="{{ old('email', $user->email) }}" required>
-                        @error('email')
-                            <small class="text-danger">{{ $message }}</small>   
-                        @enderror
-                        <label for="password" class="form-label">Mot de passe</label>
-                        <input type="password" name="password" id="password" class="form-control">
-                        @error('password')
-                            <small class="text-danger">{{ $message }}</small>
-                        @enderror
+                        <input type="email" name="email" id="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email', $user->email) }}" required>
+                        @error('email')<small class="invalid-feedback">{{ $message }}</small>@enderror
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Mot de passe <small class="text-muted">(laisser vide pour ne pas changer)</small></label>
+                        <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror">
+                        @error('password')<small class="invalid-feedback">{{ $message }}</small>@enderror
+                    </div>
+                    <div class="mb-3">
                         <label for="role" class="form-label">Rôle</label>
-                        <select name="role" id="role" class="form-control" required>
-                            <option value="employe" {{ old('role', $user->role) == 'employe' ? 'selected' : '' }}>Employé</option>
-                            <option value="admin" {{ old('role', $user->role) == 'admin' ? 'selected' : '' }}>Administrateur</option>
-                            <option value="rh" {{ old('role', $user->role) == 'rh' ? 'selected' : '' }}>Ressources Humaines</option>
-                            <option value="dg" {{ old('role', $user->role) == 'dg' ? 'selected' : '' }}>Directeur Général</option>
-                            <option value="responsable_service" {{ old('role', $user->role) == 'responsable_service' ? 'selected' : '' }}>Responsable de Service</option>
+                        <select name="role" id="role" class="form-control @error('role') is-invalid @enderror" required>
+                            <option value="" disabled>-- Sélectionner un rôle --</option>
+                            @foreach($roles as $role)
+                                <option value="{{ $role->name }}" {{ old('role', $user->role) == $role->name ? 'selected' : '' }}>
+                                    {{ $role->name }}
+                                </option>
+                            @endforeach
                         </select>
-
-
-
+                        @error('role')<small class="invalid-feedback">{{ $message }}</small>@enderror
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Enregistrer les modifications</button>
                 </form>

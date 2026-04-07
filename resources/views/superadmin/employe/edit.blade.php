@@ -64,16 +64,20 @@
                 </div>
 
                 <div class="row mb-3">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label for="nombre_enfants" class="form-label">Nombre d'enfants</label>
                         <input type="number" name="nombre_enfants" id="nombre_enfants" class="form-control" value="{{ old('nombre_enfants', $employe->nombre_enfants) }}" min="0">
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label for="date_naissance" class="form-label">Date de naissance</label>
                         <input type="date" name="date_naissance" id="date_naissance" class="form-control"
-                            value="{{ old('date_naissance', $employe->date_naissance ? $employe->date_naissance->format('Y-m-d') : '') }}">
+                            value="{{ old('date_naissance', $employe->date_naissance ? \Carbon\Carbon::parse($employe->date_naissance)->format('Y-m-d') : '') }}">
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
+                        <label for="lieu_naissance" class="form-label">Lieu de naissance</label>
+                        <input type="text" name="lieu_naissance" id="lieu_naissance" class="form-control" value="{{ old('lieu_naissance', $employe->lieu_naissance) }}">
+                    </div>
+                    <div class="col-md-3">
                         <label for="telephone" class="form-label">Téléphone</label>
                         <input type="tel" name="telephone" id="telephone" class="form-control" value="{{ old('telephone', $employe->telephone) }}" required>
                         @error('telephone')<small class="text-danger">{{ $message }}</small>@enderror
@@ -92,16 +96,54 @@
                     </div>
                 </div>
 
-                <div class="mb-3">
-                    <label for="photo_profil" class="form-label">Photo de profil</label>
-                    @if($employe->photo_profil)
-                        <div class="mb-2">
-                            <img src="{{ asset($employe->photo_profil) }}" alt="Photo actuelle" style="max-width:120px;max-height:120px;object-fit:cover;" class="rounded">
-                        </div>
-                    @endif
-                    <input type="file" name="photo_profil" id="photo_profil" class="form-control" accept="image/*"
-                        onchange="if(this.files[0].size > 5242880){ alert('Fichier trop volumineux ! Max 5 Mo'); this.value=''; }">
-                    @error('photo_profil')<small class="text-danger">{{ $message }}</small>@enderror
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="photo_profil" class="form-label">Photo de profil</label>
+                        @if($employe->photo_profil)
+                            <div class="mb-2">
+                                <img src="{{ asset($employe->photo_profil) }}" alt="Photo actuelle" style="max-width:100px;max-height:100px;object-fit:cover;" class="rounded">
+                            </div>
+                        @endif
+                        <input type="file" name="photo_profil" id="photo_profil" class="form-control" accept="image/jpg,image/jpeg,image/png">
+                        @error('photo_profil')<small class="text-danger">{{ $message }}</small>@enderror
+                    </div>
+                    <div class="col-md-4">
+                        <label for="curriculum_vitae" class="form-label">Curriculum Vitae <small class="text-muted">(PDF, DOC, DOCX)</small></label>
+                        @if($employe->curriculum_vitae)
+                            <div class="mb-2">
+                                <a href="{{ asset($employe->curriculum_vitae) }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                    <span class="mdi mdi-file-document"></span> CV actuel
+                                </a>
+                            </div>
+                        @endif
+                        <input type="file" name="curriculum_vitae" id="curriculum_vitae" class="form-control" accept=".pdf,.doc,.docx">
+                        @error('curriculum_vitae')<small class="text-danger">{{ $message }}</small>@enderror
+                    </div>
+                    <div class="col-md-4">
+                        <label for="lettre_motivation" class="form-label">Lettre de motivation <small class="text-muted">(PDF, DOC, DOCX)</small></label>
+                        @if($employe->lettre_motivation)
+                            <div class="mb-2">
+                                <a href="{{ asset($employe->lettre_motivation) }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                    <span class="mdi mdi-file-document"></span> Lettre actuelle
+                                </a>
+                            </div>
+                        @endif
+                        <input type="file" name="lettre_motivation" id="lettre_motivation" class="form-control" accept=".pdf,.doc,.docx">
+                        @error('lettre_motivation')<small class="text-danger">{{ $message }}</small>@enderror
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="salaire" class="form-label">Salaire (FCFA)</label>
+                        <input type="number" name="salaire" id="salaire" class="form-control" value="{{ old('salaire', $employe->salaire) }}" min="0" required>
+                        @error('salaire')<small class="text-danger">{{ $message }}</small>@enderror
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Matricule</label>
+                        <input type="text" class="form-control" value="{{ $employe->matricule }}" disabled>
+                        <small class="text-muted">Le matricule est l'identifiant de connexion et ne peut pas être modifié ici.</small>
+                    </div>
                 </div>
 
                 <div class="row mb-3">
@@ -145,8 +187,8 @@
 
                 <div class="mb-3">
                     <label for="date_embauche" class="form-label">Date d'embauche</label>
-                    <input type="date" name="date_embauche" id="date_embauche" class="form-control"
-                        {{-- value="{{ old('date_embauche', $employe->date_embauche ? $employe->date_embauche->format('Y-m-d') : '') }}" required> --}}
+                    <input type="date" name="date_embauche" id="date_embauche" class="form-control @error('date_embauche') is-invalid @enderror"
+                        value="{{ old('date_embauche', $employe->date_embauche ? \Carbon\Carbon::parse($employe->date_embauche)->format('Y-m-d') : '') }}" required>
                     @error('date_embauche')<small class="text-danger">{{ $message }}</small>@enderror
                 </div>
 

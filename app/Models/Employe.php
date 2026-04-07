@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Employe extends Model
 {
-        protected $fillable = [
+    use SoftDeletes;
+
+    protected $fillable = [
         'matricule',
         'nom',
         'prenom',
@@ -14,11 +17,15 @@ class Employe extends Model
         'nationalite',
         'situation_matrimoniale',
         'nombre_enfants',
+        'date_naissance',
+        'lieu_naissance',
         'telephone',
         'email',
-        'date_naissance',
         'adresse',
         'photo_profil',
+        'curriculum_vitae',
+        'lettre_motivation',
+        'salaire',
         'type_contrat_id',
         'departement_id',
         'poste_id',

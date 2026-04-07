@@ -11,18 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-      Schema::create('users', function (Blueprint $table) {
-        $table->id();
-        $table->string('nom');
-        $table->string('prenom');
-        $table->string('email')->unique();
-        $table->string('phone')->unique();
-        $table->string('password');
-        $table->string('role')->default('employe'); // admin, employe, etc.
-        $table->timestamp('date_creation')->useCurrent();
-        $table->timestamp('date_connexion')->nullable();
-        $table->rememberToken();
-        $table->timestamps();
+        Schema::create('users', function (Blueprint $table) {
+            $table->id();
+            $table->softDeletes();
+            $table->string('nom');
+            $table->string('prenom');
+            $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('password');
+            $table->enum('role', ['employe', 'admin', 'rh', 'dg', 'responsable_service'])->default('employe');
+            $table->string('login')->nullable();
+            $table->unsignedBigInteger('employe_id')->nullable();
+            $table->timestamp('date_creation')->nullable()->useCurrent();
+            $table->timestamp('date_connexion')->nullable();
+            $table->rememberToken();
+            $table->timestamps();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
@@ -33,7 +36,7 @@ return new class extends Migration
 
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
-            $table->foreignId('user_id')->nullable()->index();
+            $table->unsignedBigInteger('user_id')->nullable()->index();
             $table->string('ip_address', 45)->nullable();
             $table->text('user_agent')->nullable();
             $table->longText('payload');
@@ -41,13 +44,13 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropSoftDeletes();
+        });
     }
 };

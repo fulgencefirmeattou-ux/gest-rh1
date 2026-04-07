@@ -33,6 +33,9 @@ class PermissionController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255|unique:permissions,name',
+        ], [
+            'name.required' => 'Le nom de la permission est obligatoire.',
+            'name.unique'   => 'Cette permission existe déjà.',
         ]);
 
         Permission::create(['name' => $request->name, 'guard_name' => 'web']);
@@ -66,6 +69,9 @@ class PermissionController extends Controller
         //enregistrer les modifications d'une permission
         $request->validate([
             'name' => 'required|string|max:255|unique:permissions,name,' . $id,
+        ], [
+            'name.required' => 'Le nom de la permission est obligatoire.',
+            'name.unique'   => 'Cette permission existe déjà.',
         ]);
         Permission::findOrFail($id)->update(['name'=> $request->name,'guard_name'=> 'web']);
         return redirect()->route('permissions.index')->with('success','Permission modifiée avec succès.');

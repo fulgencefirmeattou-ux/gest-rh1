@@ -5,7 +5,12 @@
 <div class="container mt-3">
 
     <h2 class="mb-4 text-start">Liste des employés</h2>
-    <a href="{{ route('employes.create') }}" class="btn btn-primary mb-3">Ajouter un employé</a>
+    <div class="d-flex justify-content-between mb-3">
+        <a href="{{ route('employes.create') }}" class="btn btn-primary">Ajouter un employé</a>
+        <a href="{{ route('employes.trashed') }}" class="btn btn-outline-secondary">
+            <span class="mdi mdi-delete-restore"></span> Corbeille
+        </a>
+    </div>
 
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
@@ -41,7 +46,7 @@
                             <td>{{ $employe->poste->name ?? '—' }}</td>
                             <td>{{ $employe->departement->nom ?? '—' }}</td>
                             <td>{{ $employe->typeContrat->name ?? '—' }}</td>
-                            {{-- <td>{{ $employe->date_embauche ? $employe->date_embauche->format('d/m/Y') : '—' }}</td> --}}
+                            <td>{{ $employe->date_embauche ? \Carbon\Carbon::parse($employe->date_embauche)->format('d/m/Y') : '—' }}</td>
                             <td>
                                 <a href="{{ route('employes.show', $employe->id) }}" class="btn btn-sm btn-success">
                                     <span class="mdi mdi-eye"></span>
@@ -50,12 +55,9 @@
                                     <span class="mdi mdi-pencil"></span>
                                 </a>
                                 <form action="{{ route('employes.destroy', $employe->id) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline-danger"
-                                        onclick="return confirm('Supprimer cet employé ?')">
-                                        <span class="mdi mdi-trash-can"></span>
-                                    </button>
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-warning" onclick="return confirm('Archiver cet utilisateur ?')"><span class="mdi mdi-archive"></span></button>
                                 </form>
                             </td>
                         </tr>

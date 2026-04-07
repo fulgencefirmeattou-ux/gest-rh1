@@ -20,7 +20,7 @@
         <p class="text-center">Aucun employé trouvé.</p>
     @else
         <div class="table-responsive">
-            <table class="table table-nowrap table-hover mb-0 text-center">
+            <table class="table table-sm table-nowrap table-hover mb-0 text-center">
                 <thead class="table-dark">
                     <tr>
                         <th>#</th>

@@ -169,19 +169,19 @@ class EmployeController extends Controller
         ]);
 
         if ($request->hasFile('photo_profil')) {
-            $photoName = time() . '_' . $employe->nom . '.' . $request->photo_profil->extension();
+            $photoName = time() . '.' . $request->photo_profil->extension();
             $request->photo_profil->move(public_path('images/employes'), $photoName);
             $validated['photo_profil'] = 'images/employes/' . $photoName;
         }
 
         if ($request->hasFile('curriculum_vitae')) {
-            $cvName = time() . '_' . $employe->nom .  '_cv.' . $request->curriculum_vitae->extension();
+            $cvName = time() . '_cv.' . $request->curriculum_vitae->extension();
             $request->curriculum_vitae->move(public_path('documents/employes'), $cvName);
             $validated['curriculum_vitae'] = 'documents/employes/' . $cvName;
         }
 
         if ($request->hasFile('lettre_motivation')) {
-            $lmName = time() . '_' . $employe->nom . '_lm.' . $request->lettre_motivation->extension();
+            $lmName = time() . '_lm.' . $request->lettre_motivation->extension();
             $request->lettre_motivation->move(public_path('documents/employes'), $lmName);
             $validated['lettre_motivation'] = 'documents/employes/' . $lmName;
         }

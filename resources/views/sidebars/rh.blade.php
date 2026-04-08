@@ -27,8 +27,8 @@
         <ul class="side-nav-second-level">
             <li><a href="{{ route('create.employe') }}">Créer un employé</a></li>
             <li><a href="{{ route('employe.liste') }}">Liste des employés</a></li>
-            <li><a href="{{ route('contrats.create') }}">Créer un contrat</a></li>
-            <li><a href="{{ route('contrats.index') }}">Liste des contrats</a></li>
+            {{-- <li><a href="{{ route('contrats.create') }}">Créer un contrat</a></li> --}}
+            {{-- <li><a href="{{ route('contrats.index') }}">Liste des contrats</a></li> --}}
         </ul>
     </div>
 </li>
@@ -53,12 +53,12 @@
         <span class="menu-arrow"></span>
     </a>
 
-    <div class="collapse" id="sidebarDepartement">
+    {{-- <div class="collapse" id="sidebarDepartement">
         <ul class="side-nav-second-level">
             <li><a href="{{ route('create.departement') }}">Créer un Département</a></li>
             <li><a href="{{ route('departements.liste') }}">Liste des Départements</a></li>
         </ul>
-    </div>
+    </div> --}}
 </li>
 <li class="side-nav-item">
     <a data-bs-toggle="collapse" href="#sidebarPaie" class="side-nav-link">

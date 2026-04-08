@@ -18,6 +18,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PosteController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TypeContratController;
+use App\Http\Controllers\PointageController;
 
 
 
@@ -63,6 +64,31 @@ Route::resource('type_contrats', TypeContratController::class);
 // ---------------------------------------------------------------
 
 Route::resource('postes', PosteController::class);
+
+
+// ---------------------------------------------------------------
+// POINTAGE
+// ---------------------------------------------------------------
+
+Route::middleware('auth')->prefix('pointages')->name('pointages.')->group(function () {
+    // Employé — panneau de pointage
+    Route::get('/',             [PointageController::class, 'index'])->name('index');
+    Route::post('/sauvegarder', [PointageController::class, 'sauvegarder'])->name('sauvegarder');
+
+    // RH — dashboard et validation
+    Route::get('/dashboard',       [PointageController::class, 'dashboard'])->name('dashboard');
+    Route::post('/{id}/valider',   [PointageController::class, 'valider'])->name('valider');
+
+    // Statistiques mensuelles
+    Route::get('/statistiques', [PointageController::class, 'statistiques'])->name('statistiques');
+
+    // Calendrier de présence
+    Route::get('/calendrier', [PointageController::class, 'calendrier'])->name('calendrier');
+
+    // Export PDF
+    Route::get('/export/pointages',  [PointageController::class, 'exportPdfPointages'])->name('export.pointages');
+    Route::get('/export/calendrier', [PointageController::class, 'exportPdfCalendrier'])->name('export.calendrier');
+});
 
 
 // ---------------------------------------------------------------

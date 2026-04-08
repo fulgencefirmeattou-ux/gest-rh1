@@ -29,6 +29,16 @@ class User extends Authenticatable
         'date_connexion',
     ];
 
+    public function pointages()
+    {
+        return $this->hasMany(Pointage::class, 'employe_id');
+    }
+
+    public function pointagesValides()
+    {
+        return $this->hasMany(Pointage::class, 'valide_par');
+    }
+
     public function getNameAttribute(): string
     {
         return $this->nom . ' ' . $this->prenom;
@@ -41,11 +51,11 @@ class User extends Authenticatable
 
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'date_creation'     => 'datetime',
-        'date_connexion'    => 'datetime',
+        'date_creation' => 'datetime',
+        'date_connexion' => 'datetime',
     ];
 
-     public function employe()
+    public function employe()
     {
         return $this->hasOne(Employe::class, 'user_id');
     }
@@ -108,12 +118,18 @@ class User extends Authenticatable
 
     public function sidebarRole(): string
     {
-        if ($this->isAdmin()) return 'admin';
-        if ($this->isDG()) return 'dg';
-        if ($this->isRH()) return 'rh';
-        if ($this->isResponsableDepartement()) return 'responsable_departement';
-        if ($this->isResponsableService()) return 'responsable_service';
-        if ($this->isEmploye()) return 'employe';
+        if ($this->isAdmin())
+            return 'admin';
+        if ($this->isDG())
+            return 'dg';
+        if ($this->isRH())
+            return 'rh';
+        if ($this->isResponsableDepartement())
+            return 'responsable_departement';
+        if ($this->isResponsableService())
+            return 'responsable_service';
+        if ($this->isEmploye())
+            return 'employe';
 
         return 'default';
     }

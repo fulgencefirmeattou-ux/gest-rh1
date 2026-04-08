@@ -3,10 +3,10 @@
 @section('content')
 <div class="container-fluid mt-3">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
-            <h2 class="fw-bold mb-0"><i class="ri-time-line me-2"></i>Pointage du jour</h2>
-            <p class="text-muted mb-0 small">{{ $today->locale('fr')->isoFormat('dddd D MMMM YYYY') }}</p>
+            <h2 class="fw-bold mb-0"><i class="ri-time-line me-2"></i>Pointage</h2>
+            <p class="text-muted mb-0 small">{{ $date->locale('fr')->isoFormat('dddd D MMMM YYYY') }}</p>
         </div>
         <div class="d-flex gap-2 align-items-center">
             <span class="fw-bold fs-4 text-dark" id="horloge">--:--:--</span>
@@ -19,6 +19,31 @@
             <a href="{{ route('pointages.calendrier') }}" class="btn btn-outline-secondary btn-sm">
                 <i class="ri-calendar-line me-1"></i>Calendrier
             </a>
+        </div>
+    </div>
+
+    {{-- Sélecteur de date --}}
+    <div class="card shadow-sm mb-3">
+        <div class="card-body py-2">
+            <form method="GET" action="{{ route('pointages.index') }}" class="d-flex align-items-center gap-3">
+                <label class="form-label mb-0 fw-semibold text-nowrap">
+                    <i class="ri-calendar-line me-1"></i>Date de pointage
+                </label>
+                <input type="date"
+                       name="date"
+                       class="form-control form-control-sm"
+                       style="max-width:180px;"
+                       value="{{ $date->toDateString() }}"
+                       required>
+                <button type="submit" class="btn btn-primary btn-sm">
+                    <i class="ri-filter-line me-1"></i>Afficher
+                </button>
+                @if($date->toDateString() !== \Carbon\Carbon::today()->toDateString())
+                    <a href="{{ route('pointages.index') }}" class="btn btn-outline-secondary btn-sm">
+                        Aujourd'hui
+                    </a>
+                @endif
+            </form>
         </div>
     </div>
 
@@ -64,13 +89,13 @@
                                     <span class="text-success">Heure d'entrée</span> <span class="text-danger">*</span>
                                 </th>
                                 <th style="min-width:110px;">
-                                    <span class="text-danger">Heure de sortie</span>
-                                </th>
-                                <th style="min-width:110px;">
                                     <span class="text-warning">Début pause</span>
                                 </th>
                                 <th style="min-width:110px;">
                                     <span class="text-warning">Fin pause</span>
+                                </th>
+                                <th style="min-width:110px;">
+                                    <span class="text-danger">Heure de sortie</span> <span class="text-danger">*</span>
                                 </th>
                                 <th style="min-width:90px;">Travaillées</th>
                                 <th style="min-width:70px;">Sup</th>
@@ -95,22 +120,15 @@
                                     <form action="{{ route('pointages.sauvegarder') }}" method="POST">
                                         @csrf
                                         <input type="hidden" name="employe_id" value="{{ $employe->id }}">
+                                        <input type="hidden" name="date" value="{{ $date->toDateString() }}">
 
                                         {{-- Heure d'entrée --}}
                                         <td>
                                             <input type="time"
                                                    name="heure_arrivee"
                                                    class="form-control form-control-sm text-center"
-                                                   value="{{ $p && $p->heure_arrivee ? \Carbon\Carbon::createFromTimeString($p->heure_arrivee)->format('H:i') : '' }}"
+                                                   value="{{ $p?->heure_arrivee ? \Carbon\Carbon::createFromTimeString($p->heure_arrivee)->format('H:i') : '' }}"
                                                    required>
-                                        </td>
-
-                                        {{-- Heure de sortie --}}
-                                        <td>
-                                            <input type="time"
-                                                   name="heure_depart"
-                                                   class="form-control form-control-sm text-center"
-                                                   value="{{ $p && $p->heure_depart ? \Carbon\Carbon::createFromTimeString($p->heure_depart)->format('H:i') : '' }}">
                                         </td>
 
                                         {{-- Début pause --}}
@@ -118,7 +136,7 @@
                                             <input type="time"
                                                    name="heure_debut_pause"
                                                    class="form-control form-control-sm text-center"
-                                                   value="{{ $p && $p->heure_debut_pause ? \Carbon\Carbon::createFromTimeString($p->heure_debut_pause)->format('H:i') : '' }}">
+                                                   value="{{ $p?->heure_debut_pause ? \Carbon\Carbon::createFromTimeString($p->heure_debut_pause)->format('H:i') : '' }}">
                                         </td>
 
                                         {{-- Fin pause --}}
@@ -126,7 +144,16 @@
                                             <input type="time"
                                                    name="heure_fin_pause"
                                                    class="form-control form-control-sm text-center"
-                                                   value="{{ $p && $p->heure_fin_pause ? \Carbon\Carbon::createFromTimeString($p->heure_fin_pause)->format('H:i') : '' }}">
+                                                   value="{{ $p?->heure_fin_pause ? \Carbon\Carbon::createFromTimeString($p->heure_fin_pause)->format('H:i') : '' }}">
+                                        </td>
+
+                                        {{-- Heure de sortie --}}
+                                        <td>
+                                            <input type="time"
+                                                   name="heure_depart"
+                                                   class="form-control form-control-sm text-center"
+                                                   value="{{ $p?->heure_depart ? \Carbon\Carbon::createFromTimeString($p->heure_depart)->format('H:i') : '' }}"
+                                                   required>
                                         </td>
 
                                         {{-- Heures travaillées --}}

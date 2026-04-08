@@ -74,9 +74,9 @@
                                 <th class="text-start ps-3">Employé</th>
                                 <th>Date</th>
                                 <th>Arrivée</th>
-                                <th>Départ</th>
                                 <th>Début pause</th>
                                 <th>Fin pause</th>
+                                <th>Départ</th>
                                 <th>Travaillées</th>
                                 <th>Sup</th>
                                 <th>Manquantes</th>
@@ -95,14 +95,14 @@
                                     <td class="text-success fw-semibold">
                                         {{ $p->heure_arrivee ? \Carbon\Carbon::createFromTimeString($p->heure_arrivee)->format('H:i') : '—' }}
                                     </td>
-                                    <td class="text-danger fw-semibold">
-                                        {{ $p->heure_depart ? \Carbon\Carbon::createFromTimeString($p->heure_depart)->format('H:i') : '—' }}
-                                    </td>
                                     <td class="text-warning">
                                         {{ $p->heure_debut_pause ? \Carbon\Carbon::createFromTimeString($p->heure_debut_pause)->format('H:i') : '—' }}
                                     </td>
                                     <td class="text-warning">
                                         {{ $p->heure_fin_pause ? \Carbon\Carbon::createFromTimeString($p->heure_fin_pause)->format('H:i') : '—' }}
+                                    </td>
+                                    <td class="text-danger fw-semibold">
+                                        {{ $p->heure_depart ? \Carbon\Carbon::createFromTimeString($p->heure_depart)->format('H:i') : '—' }}
                                     </td>
                                     <td>
                                         @if($p->heures_travaillees !== null)

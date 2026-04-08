@@ -17,18 +17,17 @@ class PointageController extends Controller
     //  POINTAGE MOBILE (employé)
     // ══════════════════════════════════════════════════════════════
 
-    /** Affiche le tableau de pointage de tous les employés pour aujourd'hui */
-    public function index()
+    /** Affiche le tableau de pointage de tous les employés pour la date choisie */
+    public function index(Request $request)
     {
-        $today    = Carbon::today();
+        $date     = Carbon::parse($request->input('date', Carbon::today()->toDateString()));
         $employes = User::orderBy('nom')->get();
 
-        // Pointages du jour indexés par employe_id
-        $pointages = Pointage::where('date', $today->toDateString())
+        $pointages = Pointage::where('date', $date->toDateString())
             ->get()
             ->keyBy('employe_id');
 
-        return view('superadmin.pointage.index', compact('employes', 'pointages', 'today'));
+        return view('superadmin.pointage.index', compact('employes', 'pointages', 'date'));
     }
 
     /** Enregistre manuellement les heures saisies pour un employé */
@@ -36,18 +35,20 @@ class PointageController extends Controller
     {
         $request->validate([
             'employe_id'       => 'required|exists:users,id',
+            'date'             => 'required|date',
             'heure_arrivee'    => 'required|date_format:H:i',
-            'heure_depart'     => 'nullable|date_format:H:i|after:heure_arrivee',
+            'heure_depart'     => 'required|date_format:H:i|after:heure_arrivee',
             'heure_debut_pause'=> 'nullable|date_format:H:i',
             'heure_fin_pause'  => 'nullable|date_format:H:i',
         ], [
             'heure_arrivee.required'    => "L'heure d'arrivée est obligatoire.",
             'heure_arrivee.date_format' => "Format invalide (HH:MM).",
+            'heure_depart.required'     => "L'heure de sortie est obligatoire.",
             'heure_depart.date_format'  => "Format invalide (HH:MM).",
-            'heure_depart.after'        => "L'heure de départ doit être après l'arrivée.",
+            'heure_depart.after'        => "L'heure de sortie doit être après l'arrivée.",
         ]);
 
-        $today    = Carbon::today()->toDateString();
+        $today    = Carbon::parse($request->date)->toDateString();
         $employe  = User::findOrFail($request->employe_id);
 
         $pointage = Pointage::firstOrNew([

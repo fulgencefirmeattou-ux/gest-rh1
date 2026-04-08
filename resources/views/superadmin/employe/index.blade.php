@@ -36,9 +36,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($employes as $index => $employe)
+                    @foreach ($employes as $employe)
                         <tr>
-                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $employes->firstItem() + $loop->index }}</td>
                             <td>{{ $employe->matricule }}</td>
                             <td>{{ ucfirst($employe->nom) }} {{ ucfirst($employe->prenom) }}</td>
                             <td>{{ $employe->email ?? '—' }}</td>
@@ -64,6 +64,9 @@
                     @endforeach
                 </tbody>
             </table>
+        </div>
+        <div class="mt-3">
+            {{ $employes->links() }}
         </div>
     @endif
 </div>

@@ -81,6 +81,7 @@ Route::middleware('auth')->prefix('pointages')->name('pointages.')->group(functi
     // RH — dashboard et validation
     Route::get('/dashboard',       [PointageController::class, 'dashboard'])->name('dashboard');
     Route::post('/{id}/valider',   [PointageController::class, 'valider'])->name('valider');
+    Route::patch('/{id}/type',     [PointageController::class, 'updateType'])->name('type');
 
     // Statistiques mensuelles
     Route::get('/statistiques', [PointageController::class, 'statistiques'])->name('statistiques');

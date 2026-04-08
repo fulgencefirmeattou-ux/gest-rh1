@@ -13,7 +13,7 @@ class EmployeController extends Controller
 {
     public function index()
     {
-        $employes = Employe::with(['departement', 'poste', 'typeContrat'])->get();
+        $employes = Employe::with(['departement', 'poste', 'typeContrat'])->paginate(8);
         return view('superadmin.employe.index', compact('employes'));
     }
 
@@ -220,7 +220,7 @@ class EmployeController extends Controller
 
     private function generateMatricule(string $nom, string $date_embauche): string
     {
-        $prefix  = strtoupper(substr($nom, 0, 3));
+        $prefix  = strtoupper(mb_substr(iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $nom), 0, 3));
         $date    = \Carbon\Carbon::parse($date_embauche)->format('dmy');
         $count   = Employe::whereDate('created_at', now()->toDateString())->count() + 1;
         $counter = str_pad($count, 2, '0', STR_PAD_LEFT);

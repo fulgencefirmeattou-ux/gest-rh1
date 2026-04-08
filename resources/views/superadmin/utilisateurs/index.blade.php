@@ -31,9 +31,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($users as $index => $user)
+                        @foreach ($users as $user)
                             <tr>
-                                <td>{{ $index + 1 }}</td>
+                                <td>{{ $users->firstItem() + $loop->index }}</td>
                                 <td>{{ $user->name }}</td>
                                 <td>{{ $user->email ?? '—' }}</td>
                                 <td>{{ $user->role ?? '—' }}</td>
@@ -56,9 +56,13 @@
 
                     </tbody>
                 </table>
-            </div>        
+            </div>
         </div>
-        
+
+        <div class="mt-3">
+            {{ $users->links() }}
+        </div>
+
     @endif
 </section>
 

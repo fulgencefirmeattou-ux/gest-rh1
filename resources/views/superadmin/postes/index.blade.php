@@ -24,9 +24,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($postes as $index => $poste)
+                    @foreach ($postes as $poste)
                         <tr>
-                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $postes->firstItem() + $loop->index }}</td>
                             <td>{{ $poste->name }}</td>
                             <td>{{ $poste->description ?? '—' }}</td>
                             <td>
@@ -48,6 +48,9 @@
                     @endforeach
                 </tbody>
             </table>
+        </div>
+        <div class="mt-3">
+            {{ $postes->links() }}
         </div>
     @endif
 </div>

@@ -9,7 +9,7 @@ class PosteController extends Controller
 {
     public function index()
     {
-        $postes = Poste::all();
+        $postes = Poste::paginate(6);
         return view('superadmin.postes.index', compact('postes'));
     }
 

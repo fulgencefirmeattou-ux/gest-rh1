@@ -24,9 +24,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($type_contrats as $index => $type_contrat)
+                    @foreach ($type_contrats as $type_contrat)
                         <tr>
-                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $type_contrats->firstItem() + $loop->index }}</td>
                             <td>{{ $type_contrat->name }}</td>
                             <td>{{ $type_contrat->description ?? '—' }}</td>
                             <td>
@@ -48,6 +48,9 @@
                     @endforeach
                 </tbody>
             </table>
+        </div>
+        <div class="mt-3">
+            {{ $type_contrats->links() }}
         </div>
     @endif
 </div>

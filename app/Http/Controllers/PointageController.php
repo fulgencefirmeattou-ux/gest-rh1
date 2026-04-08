@@ -142,6 +142,20 @@ class PointageController extends Controller
         return back()->with('success', "Pointage {$label}.");
     }
 
+    /** Met à jour le type de jour d'un pointage */
+    public function updateType(Request $request, int $id)
+    {
+        $request->validate([
+            'type_jour' => 'required|in:NORMAL,CONGE,FERIE',
+        ]);
+
+        $pointage = Pointage::findOrFail($id);
+        $pointage->type_jour = $request->type_jour;
+        $pointage->save();
+
+        return back()->with('success', 'Type de jour mis à jour.');
+    }
+
     // ══════════════════════════════════════════════════════════════
     //  STATISTIQUES MENSUELLES
     // ══════════════════════════════════════════════════════════════

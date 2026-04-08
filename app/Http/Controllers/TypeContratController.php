@@ -9,7 +9,7 @@ class TypeContratController extends Controller
 {
     public function index()
     {
-        $type_contrats = TypeContrat::all();
+        $type_contrats = TypeContrat::paginate(6);
         return view('superadmin.type_contrats.index', compact('type_contrats'));
     }
 

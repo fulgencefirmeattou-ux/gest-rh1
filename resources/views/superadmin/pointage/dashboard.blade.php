@@ -126,7 +126,20 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <span class="badge bg-secondary">{{ $p->type_jour }}</span>
+                                        <form action="{{ route('pointages.type', $p->id) }}" method="POST" class="d-flex gap-1 align-items-center justify-content-center">
+                                            @csrf
+                                            @method('PATCH')
+                                            <select name="type_jour" class="form-select form-select-sm" style="min-width:95px;">
+                                                @foreach(['NORMAL', 'CONGE', 'FERIE'] as $type)
+                                                    <option value="{{ $type }}" {{ $p->type_jour === $type ? 'selected' : '' }}>
+                                                        {{ $type }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            <button type="submit" class="btn btn-secondary btn-sm" title="Enregistrer le type">
+                                                <i class="ri-save-line"></i>
+                                            </button>
+                                        </form>
                                     </td>
                                     <td>
                                         <span class="badge bg-{{ $p->couleur_statut }}">{{ $p->statut }}</span>

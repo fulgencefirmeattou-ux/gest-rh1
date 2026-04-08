@@ -85,6 +85,7 @@
                         <thead class="table-dark">
                             <tr>
                                 <th class="text-start ps-3" style="min-width:160px;">Employé</th>
+                                <th style="min-width:80px;">Absent(e)</th>
                                 <th style="min-width:110px;">
                                     <span class="text-success">Heure d'entrée</span> <span class="text-danger">*</span>
                                 </th>
@@ -121,6 +122,19 @@
                                         @csrf
                                         <input type="hidden" name="employe_id" value="{{ $employe->id }}">
                                         <input type="hidden" name="date" value="{{ $date->toDateString() }}">
+
+                                        {{-- Absent --}}
+                                        <td>
+                                            <div class="form-check d-flex justify-content-center">
+                                                <input type="checkbox"
+                                                       name="absent"
+                                                       id="absent_{{ $employe->id }}"
+                                                       class="form-check-input absent-toggle"
+                                                       value="1"
+                                                       data-id="{{ $employe->id }}"
+                                                       {{ $p?->absent ? 'checked' : '' }}>
+                                            </div>
+                                        </td>
 
                                         {{-- Heure d'entrée --}}
                                         <td>
@@ -192,11 +206,21 @@
                                             @endif
                                         </td>
 
-                                        {{-- Bouton enregistrer --}}
+                                        {{-- Boutons action --}}
                                         <td>
-                                            <button type="submit" class="btn btn-primary btn-sm" title="Enregistrer">
-                                                <i class="ri-save-line"></i>
-                                            </button>
+                                            <div class="d-flex gap-1 justify-content-center">
+                                                <button type="submit" class="btn btn-primary btn-sm" title="Enregistrer">
+                                                    <i class="ri-save-line"></i>
+                                                </button>
+                                                @if($p)
+                                                    <button type="button"
+                                                            class="btn btn-outline-danger btn-sm"
+                                                            title="Annuler l'enregistrement"
+                                                            onclick="annulerPointage({{ $p->id }}, '{{ $date->toDateString() }}')">
+                                                        <i class="ri-close-line"></i>
+                                                    </button>
+                                                @endif
+                                            </div>
                                         </td>
                                     </form>
                                 </tr>
@@ -219,7 +243,22 @@
     @endif
 </div>
 
+{{-- Formulaire caché pour annuler --}}
+<form id="form-annuler" action="" method="POST" style="display:none;">
+    @csrf
+    @method('DELETE')
+</form>
+
 <script>
+    var baseAnnulerUrl = "{{ url('pointages') }}";
+
+    function annulerPointage(id, date) {
+        if (!confirm('Annuler l\'enregistrement du pointage de ce jour ?')) return;
+        var form = document.getElementById('form-annuler');
+        form.action = baseAnnulerUrl + '/' + id + '/annuler?date=' + date;
+        form.submit();
+    }
+
     function updateHorloge() {
         const now = new Date();
         const h = String(now.getHours()).padStart(2, '0');
@@ -229,5 +268,21 @@
     }
     updateHorloge();
     setInterval(updateHorloge, 1000);
+
+    // Grise les champs heure quand "Absent" est coché
+    function toggleHeures(checkbox) {
+        const row  = checkbox.closest('tr');
+        const inputs = row.querySelectorAll('input[type="time"]');
+        inputs.forEach(input => {
+            input.disabled = checkbox.checked;
+            input.required = !checkbox.checked;
+            if (checkbox.checked) input.value = '';
+        });
+    }
+
+    document.querySelectorAll('.absent-toggle').forEach(cb => {
+        toggleHeures(cb); // état initial
+        cb.addEventListener('change', () => toggleHeures(cb));
+    });
 </script>
 @endsection

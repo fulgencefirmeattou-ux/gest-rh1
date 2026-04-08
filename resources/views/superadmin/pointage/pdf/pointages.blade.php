@@ -17,6 +17,9 @@
         .badge-secondary{ background: #6c757d; color:#fff; padding:2px 5px; border-radius:3px; }
         .text-right { text-align: right; }
         .footer { margin-top: 20px; font-size: 8px; color: #999; text-align: center; }
+        .dot { display:inline-block; width:9px; height:9px; border-radius:50%; }
+        .dot-rouge { background:#dc3545; }
+        .dot-vert  { background:#198754; }
     </style>
 </head>
 <body>
@@ -38,6 +41,7 @@
                     <th>Travaillées</th>
                     <th>Sup</th>
                     <th>Manquantes</th>
+                    <th>Absent</th>
                     <th>Type</th>
                     <th>Statut</th>
                 </tr>
@@ -58,6 +62,13 @@
                         <td><span class="{{ $htC }}">{{ $p->heures_travaillees_format }}</span></td>
                         <td>{{ $p->heures_sup > 0 ? '+'.number_format($p->heures_sup,2).'h' : '—' }}</td>
                         <td>{{ $p->heures_manquantes > 0 ? '-'.number_format($p->heures_manquantes,2).'h' : '—' }}</td>
+                        <td>
+                            @if($p->absent)
+                                <span class="dot dot-rouge" title="Absent"></span>
+                            @else
+                                <span class="dot dot-vert" title="Présent"></span>
+                            @endif
+                        </td>
                         <td><span class="badge-secondary">{{ $p->type_jour }}</span></td>
                         <td><span class="{{ $statC }}">{{ $p->statut }}</span></td>
                     </tr>

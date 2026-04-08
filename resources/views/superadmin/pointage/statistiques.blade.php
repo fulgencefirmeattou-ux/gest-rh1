@@ -101,8 +101,8 @@
             <div class="col-md-3">
                 <div class="card border-0 shadow-sm text-center">
                     <div class="card-body py-3">
-                        <div class="fs-2 fw-bold text-secondary">{{ $stats->sum('jours_absence') }}</div>
-                        <small class="text-muted">Total absences</small>
+                        <div class="fs-2 fw-bold text-secondary">{{ $stats->sum('heures_absence') }}h</div>
+                        <small class="text-muted">Total heures d'absence</small>
                     </div>
                 </div>
             </div>
@@ -153,8 +153,11 @@
                                         @endif
                                     </td>
                                     <td class="text-center">
-                                        @if($s['jours_absence'] > 0)
-                                            <span class="badge bg-warning text-dark">{{ $s['jours_absence'] }}j</span>
+                                        @if($s['heures_absence'] > 0)
+                                            <span class="badge bg-warning text-dark">
+                                                {{ $s['heures_absence'] }}h
+                                                <small class="opacity-75">({{ $s['jours_absence'] }}j)</small>
+                                            </span>
                                         @else
                                             <span class="text-muted">—</span>
                                         @endif

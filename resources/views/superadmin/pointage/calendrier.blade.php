@@ -91,6 +91,7 @@
                             <th>Travaillées</th>
                             <th>Sup</th>
                             <th>Manquantes</th>
+                            <th>Absent</th>
                             <th>Type</th>
                             <th>Statut</th>
                         </tr>
@@ -156,6 +157,15 @@
                                         <span class="text-danger">-8.00h</span>
                                     @else
                                         —
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($isWeekend)
+                                        <span class="text-muted">—</span>
+                                    @elseif($p?->absent)
+                                        <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#dc3545;" title="Absent"></span>
+                                    @else
+                                        <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#198754;" title="Présent"></span>
                                     @endif
                                 </td>
                                 <td>

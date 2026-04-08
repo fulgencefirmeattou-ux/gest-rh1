@@ -21,6 +21,7 @@ class Pointage extends Model
         'type_jour',
         'valide_par',
         'date_validation',
+        'absent',
     ];
 
     protected $casts = [
@@ -29,6 +30,7 @@ class Pointage extends Model
         'heures_travaillees' => 'float',
         'heures_sup'         => 'float',
         'heures_manquantes'  => 'float',
+        'absent'             => 'boolean',
     ];
 
     // Journée normale = 8h

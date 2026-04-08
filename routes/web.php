@@ -75,6 +75,9 @@ Route::middleware('auth')->prefix('pointages')->name('pointages.')->group(functi
     Route::get('/',             [PointageController::class, 'index'])->name('index');
     Route::post('/sauvegarder', [PointageController::class, 'sauvegarder'])->name('sauvegarder');
 
+    // Annuler un pointage
+    Route::delete('/{id}/annuler', [PointageController::class, 'annuler'])->name('annuler');
+
     // RH — dashboard et validation
     Route::get('/dashboard',       [PointageController::class, 'dashboard'])->name('dashboard');
     Route::post('/{id}/valider',   [PointageController::class, 'valider'])->name('valider');

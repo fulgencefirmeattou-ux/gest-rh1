@@ -33,11 +33,13 @@ class PointageController extends Controller
     /** Enregistre manuellement les heures saisies pour un employé */
     public function sauvegarder(Request $request)
     {
+        $absent = $request->boolean('absent');
+
         $request->validate([
             'employe_id'       => 'required|exists:users,id',
             'date'             => 'required|date',
-            'heure_arrivee'    => 'required|date_format:H:i',
-            'heure_depart'     => 'required|date_format:H:i|after:heure_arrivee',
+            'heure_arrivee'    => $absent ? 'nullable|date_format:H:i' : 'required|date_format:H:i',
+            'heure_depart'     => $absent ? 'nullable|date_format:H:i' : 'required|date_format:H:i|after:heure_arrivee',
             'heure_debut_pause'=> 'nullable|date_format:H:i',
             'heure_fin_pause'  => 'nullable|date_format:H:i',
         ], [
@@ -48,8 +50,8 @@ class PointageController extends Controller
             'heure_depart.after'        => "L'heure de sortie doit être après l'arrivée.",
         ]);
 
-        $today    = Carbon::parse($request->date)->toDateString();
-        $employe  = User::findOrFail($request->employe_id);
+        $today   = Carbon::parse($request->date)->toDateString();
+        $employe = User::findOrFail($request->employe_id);
 
         $pointage = Pointage::firstOrNew([
             'employe_id' => $employe->id,
@@ -58,20 +60,45 @@ class PointageController extends Controller
 
         $pointage->statut    = $pointage->statut    ?? 'EN_ATTENTE';
         $pointage->type_jour = $pointage->type_jour ?? 'NORMAL';
+        $pointage->absent    = $absent;
 
-        $pointage->heure_arrivee     = $request->heure_arrivee     ? $request->heure_arrivee . ':00'     : null;
-        $pointage->heure_depart      = $request->heure_depart      ? $request->heure_depart . ':00'      : null;
-        $pointage->heure_debut_pause = $request->heure_debut_pause ? $request->heure_debut_pause . ':00' : null;
-        $pointage->heure_fin_pause   = $request->heure_fin_pause   ? $request->heure_fin_pause . ':00'   : null;
+        if ($absent) {
+            // Effacer les heures si marqué absent
+            $pointage->heure_arrivee     = null;
+            $pointage->heure_depart      = null;
+            $pointage->heure_debut_pause = null;
+            $pointage->heure_fin_pause   = null;
+            $pointage->heures_travaillees = null;
+            $pointage->heures_sup         = 0;
+            $pointage->heures_manquantes  = 8;
+        } else {
+            $pointage->heure_arrivee     = $request->heure_arrivee     ? $request->heure_arrivee . ':00'     : null;
+            $pointage->heure_depart      = $request->heure_depart      ? $request->heure_depart . ':00'      : null;
+            $pointage->heure_debut_pause = $request->heure_debut_pause ? $request->heure_debut_pause . ':00' : null;
+            $pointage->heure_fin_pause   = $request->heure_fin_pause   ? $request->heure_fin_pause . ':00'   : null;
 
-        if ($pointage->heure_arrivee && $pointage->heure_depart) {
-            $pointage->calculerHeures();
+            if ($pointage->heure_arrivee && $pointage->heure_depart) {
+                $pointage->calculerHeures();
+            }
         }
 
         $pointage->save();
 
         $nom = $employe->nom . ' ' . $employe->prenom;
         return back()->with('success', "Pointage de {$nom} enregistré." . ($pointage->heures_travaillees !== null ? ' Heures : ' . $pointage->heures_travaillees_format : ''));
+    }
+
+    /** Supprime (annule) un pointage — remet la ligne à zéro */
+    public function annuler(int $id)
+    {
+        $pointage = Pointage::findOrFail($id);
+        $date     = Carbon::parse($pointage->date)->toDateString();
+
+        $pointage->delete();
+
+        return redirect()
+            ->route('pointages.index', ['date' => $date])
+            ->with('success', 'Pointage annulé.');
     }
 
     // ══════════════════════════════════════════════════════════════
@@ -145,7 +172,8 @@ class PointageController extends Controller
                     'heures_travaillees' => round($pointages->sum('heures_travaillees'), 2),
                     'heures_sup'         => round($pointages->sum('heures_sup'), 2),
                     'heures_manquantes'  => round($pointages->sum('heures_manquantes'), 2),
-                    'jours_absence'      => $pointages->where('type_jour', 'ABSENCE')->count(),
+                    'jours_absence'      => $pointages->where('absent', true)->count(),
+                    'heures_absence'     => $pointages->where('absent', true)->count() * 8,
                 ];
             })->values();
 

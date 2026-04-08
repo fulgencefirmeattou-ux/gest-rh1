@@ -16,6 +16,9 @@ return new class extends Migration {
             // Date du pointage
             $table->date('date');
 
+            // Indique si l'employé était absent ce jour-là (pour les jours d'absence justifiée)
+            $table->boolean('absent')->default(false);
+
             // Heures de travail
             $table->time('heure_arrivee')->nullable();
             $table->time('heure_depart')->nullable();
@@ -33,7 +36,7 @@ return new class extends Migration {
             $table->enum('statut', ['EN_ATTENTE', 'VALIDE', 'REFUSE'])->default('EN_ATTENTE');
 
             // Nature du jour
-            $table->enum('type_jour', ['NORMAL', 'CONGE', 'FERIE', 'ABSENCE'])->default('NORMAL');
+            $table->enum('type_jour', ['NORMAL', 'CONGE', 'FERIE'])->default('NORMAL');
 
             // Validation RH
             $table->foreignId('valide_par')->nullable()->constrained('users')->nullOnDelete();
@@ -49,5 +52,6 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::dropIfExists('pointages');
+    
     }
 };

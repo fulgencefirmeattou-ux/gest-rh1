@@ -13,7 +13,7 @@ class PermissionController extends Controller
     public function index()
     {
         //afficher la liste des permissions
-        $permissions = Permission::all();
+        $permissions = Permission::paginate(7);
         return view("superadmin.permissions.index", compact("permissions"));
     }
 

@@ -63,6 +63,13 @@
                 </a>
             </li>
             <li class="side-nav-item">
+                <a href="{{ route('contrats.index') }}" class="side-nav-link">
+                    <i class="ri-calendar-line"></i>
+                    <span>Contrats</span>
+                    {{-- <span class="menu-arrow"></span> --}}
+                </a>
+            </li>
+            <li class="side-nav-item">
                 <a href="{{ route('pointages.index') }}" class="side-nav-link">
                     <i class="ri-calendar-line"></i>
                     <span>Pointage</span>

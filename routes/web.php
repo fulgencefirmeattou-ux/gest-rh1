@@ -288,14 +288,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
 
     // Contrats
-    // Route::resource('contrats', ContratController::class)->names([
-    //     'index'  => 'contrats.index',
-    //     'create' => 'contrats.create',
-    //     'store'  => 'contrats.store',
-    //     'show'   => 'contrats.show',
-    //     'edit'   => 'contrats.edit',
-    //     'update' => 'contrats.update',
-    // ]);
+    Route::resource('contrats', ContratController::class);
     Route::get('contrats/{contrat}/download', [ContratController::class, 'downloadPdf'])->name('contrats.download');
 
     // Bulletins de paie

@@ -21,6 +21,7 @@
                 <table class="table table-nowrap table-hover mb-0 text-center" id="btn-editable">
                     <thead class="table-dark">
                         <tr>
+                            <th>#</th>
                             <th>Permission</th>
                             <th>Actions</th>
                         </tr>
@@ -28,6 +29,7 @@
                     <tbody>
                         @foreach($permissions as $permission)
                             <tr>
+                                <td>{{ $permissions->firstItem() + $loop->index }}</td>
                                 <td>{{ $permission->name }}</td>
                                 <td>
                                     <a href="{{ route('permissions.edit', $permission->id) }}" class="btn btn-sm btn-outline-primary">
@@ -48,7 +50,9 @@
                 </table>
             </div>        
         </div>
-        
+        <div class="mt-3">
+            {{ $permissions->links() }}
+        </div>
     @endif
 </div>
 @endsection

@@ -25,7 +25,7 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Employé <span class="text-danger">*</span></label>
-                        <select name="employe_id" class="form-select @error('employe_id') is-invalid @enderror" required>
+                        <select name="employe_id" id="employe_id" class="form-select @error('employe_id') is-invalid @enderror" required>
                             <option value="">-- Sélectionner un employé --</option>
                             @foreach($employes as $employe)
                                 <option value="{{ $employe->id }}" {{ old('employe_id') == $employe->id ? 'selected' : '' }}>
@@ -73,7 +73,8 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Salaire de base (FCFA) <span class="text-danger">*</span></label>
-                        <input type="number" name="salaire_base" class="form-control @error('salaire_base') is-invalid @enderror"
+                        <input type="number" name="salaire_base" id="salaire_base"
+                               class="form-control @error('salaire_base') is-invalid @enderror"
                                value="{{ old('salaire_base') }}" min="0" required>
                         @error('salaire_base')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -116,6 +117,63 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    // ---- Données employés (injectées côté serveur) ----
+    const employesData = @json($employes->keyBy('id')->map(fn($e) => [
+        'salaire'       => $e->salaire,
+        'type_contrat'  => optional($e->typeContrat)->name,
+    ]));
+
+    const employeSelect  = document.getElementById('employe_id');
+    const typeSelect     = document.getElementById('type_contrat');
+    const salaireInput   = document.getElementById('salaire_base');
+    const dateFinInput   = document.getElementById('date_fin');
+
+    const GRAYED = { backgroundColor: '#e9ecef', pointerEvents: 'none', cursor: 'not-allowed' };
+
+    function applyGray(el) {
+        Object.assign(el.style, GRAYED);
+    }
+
+    function removeGray(el) {
+        el.style.backgroundColor = '';
+        el.style.pointerEvents   = '';
+        el.style.cursor          = '';
+    }
+
+    // ---- Pré-remplissage au changement d'employé ----
+    employeSelect.addEventListener('change', function () {
+        const data = employesData[this.value];
+
+        if (data) {
+            // Salaire
+            salaireInput.value    = data.salaire ?? '';
+            salaireInput.readOnly = true;
+            applyGray(salaireInput);
+
+            // Type de contrat
+            const match = data.type_contrat
+                ? [...typeSelect.options].find(o => o.value.toLowerCase() === data.type_contrat.toLowerCase())
+                : null;
+
+            if (match) {
+                typeSelect.value = match.value;
+                applyGray(typeSelect);
+            } else {
+                typeSelect.value = '';
+                removeGray(typeSelect);
+            }
+        } else {
+            // Réinitialiser si aucun employé sélectionné
+            salaireInput.value    = '';
+            salaireInput.readOnly = false;
+            removeGray(salaireInput);
+
+            typeSelect.value = '';
+            removeGray(typeSelect);
+        }
+    });
+
+    // ---- Primes ----
     const container = document.getElementById('primes-container');
     const btnAdd    = document.getElementById('btn-add-prime');
     let index       = 0;
@@ -143,10 +201,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Masquer date_fin si CDI
-    const typeSelect   = document.getElementById('type_contrat');
-    const dateFinInput = document.getElementById('date_fin');
-
+    // ---- Masquer date_fin si CDI ----
     typeSelect.addEventListener('change', function () {
         if (this.value === 'CDI') dateFinInput.value = '';
     });

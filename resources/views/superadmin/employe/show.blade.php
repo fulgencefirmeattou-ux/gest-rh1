@@ -50,6 +50,10 @@
                     <td>{{ $employe->date_naissance ? \Carbon\Carbon::parse($employe->date_naissance)->format('d/m/Y') : '—' }}</td>
                 </tr>
                 <tr>
+                    <th>Lieu de naissance</th>
+                    <td>{{ $employe->lieu_naissance ?? '—' }}</td>
+                </tr>
+                <tr>
                     <th>Email</th>
                     <td>{{ $employe->email ?? '—' }}</td>
                 </tr>

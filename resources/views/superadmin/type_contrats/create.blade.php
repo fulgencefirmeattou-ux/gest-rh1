@@ -2,7 +2,7 @@
 
 @section('content')
 
-<div class="container mt-5">
+<div class="container mt-3">
     <h2 class="mb-4 text-start">Créer un type de contrat</h2>
     <a href="{{ route('type_contrats.index') }}" class="btn btn-secondary mb-3">Retour à la liste</a>
 

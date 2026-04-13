@@ -3,7 +3,7 @@
 @section('content')
 
 <section>
-    <div class="container mt-5">
+    <div class="container mt-3">
         <h2 class="mb-4 text-start">Créer un département</h2>
 
         @if(session('success'))

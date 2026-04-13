@@ -19,7 +19,7 @@ class ContratController extends Controller
 
     public function create()
     {
-        $employes = Employe::orderBy('nom')->get();
+        $employes = Employe::with('typeContrat')->orderBy('nom')->get();
         return view('superadmin.contrats.create', compact('employes'));
     }
 

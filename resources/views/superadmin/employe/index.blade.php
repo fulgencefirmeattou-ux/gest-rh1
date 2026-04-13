@@ -29,7 +29,7 @@
                         <th>Email</th>
                         <th>Téléphone</th>
                         <th>Poste</th>
-                        <th>Département</th>
+                        {{-- <th>Département</th> --}}
                         <th>Type de contrat</th>
                         <th>Date d'embauche</th>
                         <th>Action</th>
@@ -44,7 +44,7 @@
                             <td>{{ $employe->email ?? '—' }}</td>
                             <td>{{ $employe->telephone ?? '—' }}</td>
                             <td>{{ $employe->poste->name ?? '—' }}</td>
-                            <td>{{ $employe->departement->nom ?? '—' }}</td>
+                            {{-- <td>{{ $employe->departement->nom ?? '—' }}</td> --}}
                             <td>{{ $employe->typeContrat->name ?? '—' }}</td>
                             <td>{{ $employe->date_embauche ? \Carbon\Carbon::parse($employe->date_embauche)->format('d/m/Y') : '—' }}</td>
                             <td>

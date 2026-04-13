@@ -4,7 +4,7 @@
 
 <section class="row">
     <div class="col-12 col-lg-12">
-        <div class="container mt-5">
+        <div class="container mt-3">
             <h2 class="mb-4 text-start">Modifier l'employé</h2>
             <a href="{{ route('employes.index') }}" class="btn btn-secondary mb-3">Retour à la liste</a>
 

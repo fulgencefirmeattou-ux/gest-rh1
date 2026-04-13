@@ -70,7 +70,7 @@ Route::resource('postes', PosteController::class);
 // POINTAGE
 // ---------------------------------------------------------------
 
-Route::middleware('auth')->prefix('pointages')->name('pointages.')->group(function () {
+Route::prefix('pointages')->name('pointages.')->group(function () {
     // Employé — panneau de pointage
     Route::get('/',             [PointageController::class, 'index'])->name('index');
     Route::post('/sauvegarder', [PointageController::class, 'sauvegarder'])->name('sauvegarder');
@@ -285,11 +285,11 @@ Route::middleware('auth')->group(function () {
 // PAIE (CONTRATS & BULLETINS)
 // ---------------------------------------------------------------
 
-Route::middleware('auth')->group(function () {
+// Contrats
+Route::resource('contrats', ContratController::class);
+Route::get('contrats/{contrat}/download', [ContratController::class, 'downloadPdf'])->name('contrats.download');
 
-    // Contrats
-    Route::resource('contrats', ContratController::class);
-    Route::get('contrats/{contrat}/download', [ContratController::class, 'downloadPdf'])->name('contrats.download');
+Route::middleware('auth')->group(function () {
 
     // Bulletins de paie
     Route::get('bulletins/create', [BulletinController::class, 'create'])->name('bulletins.create');

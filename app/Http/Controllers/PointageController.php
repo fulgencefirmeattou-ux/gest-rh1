@@ -205,10 +205,10 @@ class PointageController extends Controller
     {
         $mois      = (int) $request->input('mois', Carbon::today()->month);
         $annee     = (int) $request->input('annee', Carbon::today()->year);
-        $employeId = $request->input('employe_id', auth()->id());
+        $employes  = User::orderBy('nom')->get();
+        $employeId = $request->input('employe_id', auth()->id() ?? $employes->first()?->id);
 
         $employe = User::findOrFail($employeId);
-        $employes = User::orderBy('nom')->get();
 
         // Nombre de jours dans le mois
         $nbJours  = Carbon::createFromDate($annee, $mois, 1)->daysInMonth;

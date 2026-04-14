@@ -1,0 +1,55 @@
+ * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: DejaVu Sans, sans-serif;
+            font-size: 9px;
+            color: #111;
+            padding: 14px 16px;
+        }
+
+        /* ── En-tête ──────────────────────────────────────────── */
+        .header { width:100%; border-collapse:collapse; margin-bottom:6px; }
+        .header td { vertical-align:top; padding:2px 4px; }
+        .header .col-gauche { width:48%; border:1px solid #999; padding:6px; }
+        .header .col-droite { width:52%; border:1px solid #999; padding:6px; }
+        .company-name { font-size:13px; font-weight:bold; color:#003399; margin-bottom:4px; }
+        .bp-titre     { font-size:13px; font-weight:bold; text-align:center; border-bottom:1px solid #333; padding-bottom:3px; margin-bottom:4px; letter-spacing:1px; }
+        .bp-periode   { font-size:9px; font-weight:bold; text-align:center; margin-bottom:6px; }
+        .info-table   { width:100%; border-collapse:collapse; font-size:8.5px; }
+        .info-table td { padding:1px 0; }
+        .info-table .lbl { font-weight:bold; white-space:nowrap; padding-right:4px; }
+
+        /* ── Table principale ─────────────────────────────────── */
+        .main-table { width:100%; border-collapse:collapse; font-size:8px; margin-top:4px; }
+        .main-table th {
+            background:#1a1a2e; color:#fff;
+            padding:4px 3px; text-align:center;
+            border:1px solid #444;
+        }
+        .main-table td {
+            padding:2px 3px;
+            border:1px solid #ccc;
+            text-align:center;
+            white-space:nowrap;
+        }
+        .main-table .td-libelle { text-align:left; }
+        .row-brut   { background:#e8f5e9; font-weight:bold; }
+        .row-bi     { background:#e3f2fd; font-weight:bold; border-bottom:2px solid #333; }
+        .row-subtot { background:#f5f5f5; font-weight:bold; }
+        .row-net    { background:#c8e6c9; font-weight:bold; }
+        .row-retenu { background:#ffebee; font-weight:bold; }
+        .num        { text-align:right; }
+
+        /* ── Bas de page ──────────────────────────────────────── */
+        .bottom { width:100%; border-collapse:collapse; margin-top:4px; font-size:8.5px; }
+        .bottom td { border:1px solid #ccc; padding:3px 5px; vertical-align:top; }
+        .cumul-table { width:100%; border-collapse:collapse; font-size:8.5px; }
+        .cumul-table td { border:1px solid #ccc; padding:3px 5px; }
+        .net-table { width:100%; border-collapse:collapse; font-size:9px; }
+        .net-table td { border:1px solid #ccc; padding:3px 5px; }
+        .footer-strip { width:100%; border-collapse:collapse; margin-top:3px; font-size:8px; }
+        .footer-strip td { border:1px solid #ccc; padding:3px 5px; }
+        .bg-header   { background:#2c3e50; color:#fff; font-weight:bold; text-align:center; }
+        .bg-net      { background:#1a7a3e; color:#fff; font-weight:bold; font-size:11px; text-align:center; }
+        .text-right  { text-align:right; }
+        .text-center { text-align:center; }
+        .bold        { font-weight:bold; }

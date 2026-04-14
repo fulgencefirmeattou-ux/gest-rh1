@@ -19,6 +19,7 @@ use App\Http\Controllers\PosteController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TypeContratController;
 use App\Http\Controllers\PointageController;
+use App\Http\Controllers\InfoEntrepriseController;
 
 
 
@@ -289,15 +290,25 @@ Route::middleware('auth')->group(function () {
 Route::resource('contrats', ContratController::class);
 Route::get('contrats/{contrat}/download', [ContratController::class, 'downloadPdf'])->name('contrats.download');
 
-Route::middleware('auth')->group(function () {
+// Info Entreprise
+Route::get ('info-entreprise',       [InfoEntrepriseController::class, 'index'] )->name('info-entreprise.index');
+Route::put ('info-entreprise',       [InfoEntrepriseController::class, 'update'])->name('info-entreprise.update');
 
-    // Bulletins de paie
-    Route::get('bulletins/create', [BulletinController::class, 'create'])->name('bulletins.create');
-    Route::post('bulletins/generate', [BulletinController::class, 'generate'])->name('bulletins.generate');
-    Route::resource('bulletins', BulletinController::class)->only(['index', 'show']);
-    Route::get('bulletins/{bulletin}/download', [BulletinController::class, 'downloadPdf'])->name('bulletins.download');
-    Route::post('bulletins/{bulletin}/payer', [BulletinController::class, 'payer'])->name('bulletins.payer');
-});
+// Historique bulletins par employé
+Route::get ('employes/{employe}/historique-paiements', [BulletinController::class, 'historiqueEmploye'])->name('employes.historique');
+
+// Bulletins de paie
+Route::get ('bulletins',                         [BulletinController::class, 'index']      )->name('bulletins.index');
+Route::get ('bulletins/create',                  [BulletinController::class, 'create']     )->name('bulletins.create');
+Route::post('bulletins',                         [BulletinController::class, 'store']      )->name('bulletins.store');
+Route::get ('bulletins/{bulletin}',              [BulletinController::class, 'show']       )->name('bulletins.show');
+Route::delete('bulletins/{bulletin}',            [BulletinController::class, 'destroy']    )->name('bulletins.destroy');
+Route::post('bulletins/{bulletin}/valider',      [BulletinController::class, 'valider']    )->name('bulletins.valider');
+Route::post('bulletins/{bulletin}/payer',        [BulletinController::class, 'payer']      )->name('bulletins.payer');
+Route::get ('bulletins/{bulletin}/download',     [BulletinController::class, 'downloadPdf'])->name('bulletins.download');
+// AJAX
+Route::post('bulletins/calculer',               [BulletinController::class, 'calculer']   )->name('bulletins.calculer');
+Route::get ('bulletins/employe/{id}/info',       [BulletinController::class, 'infoEmploye'])->name('bulletins.employe.info');
 
 
 

@@ -78,6 +78,13 @@
             </li>
 
             <li class="side-nav-item">
+                <a href="{{ route('bulletins.index') }}" class="side-nav-link">
+                    <i class="ri-file-text-line"></i>
+                    <span>Bulletins de paie</span>
+                </a>
+            </li>
+
+            <li class="side-nav-item">
                 <a href="{{ route('roles.index') }}" class="side-nav-link">
                     <i class="ri-calendar-line"></i>
                     <span>Rôles</span>
@@ -86,10 +93,16 @@
             </li>
 
             <li class="side-nav-item">
-
                 <a href="{{ route('permissions.index') }}" class="side-nav-link">
                     <i class="ri-calendar-line"></i>
                     <span>Permissions</span>
+                    {{-- <span class="menu-arrow"></span> --}}
+                </a>
+            </li>
+            <li class="side-nav-item">
+                <a href="{{ route('info-entreprise.index') }}" class="side-nav-link">
+                    <i class="ri-calendar-line"></i>
+                    <span>Info entreprise</span>
                     {{-- <span class="menu-arrow"></span> --}}
                 </a>
             </li>

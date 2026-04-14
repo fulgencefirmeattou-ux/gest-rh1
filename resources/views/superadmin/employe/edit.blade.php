@@ -6,7 +6,14 @@
     <div class="col-12 col-lg-12">
         <div class="container mt-3">
             <h2 class="mb-4 text-start">Modifier l'employé</h2>
-            <a href="{{ route('employes.index') }}" class="btn btn-secondary mb-3">Retour à la liste</a>
+            <div class="d-flex gap-2 mb-3">
+                <a href="{{ route('employes.index') }}" class="btn btn-secondary btn-sm">
+                    <i class="ri-arrow-left-line me-1"></i>Retour à la liste
+                </a>
+                <a href="{{ route('employes.historique', $employe->id) }}" class="btn btn-outline-info btn-sm">
+                    <i class="ri-history-line me-1"></i>Historique de paiements
+                </a>
+            </div>
 
             @if(session('success'))
                 <div class="alert alert-success">{{ session('success') }}</div>

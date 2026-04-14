@@ -48,11 +48,14 @@
                             <td>{{ $employe->typeContrat->name ?? '—' }}</td>
                             <td>{{ $employe->date_embauche ? \Carbon\Carbon::parse($employe->date_embauche)->format('d/m/Y') : '—' }}</td>
                             <td>
-                                <a href="{{ route('employes.show', $employe->id) }}" class="btn btn-sm btn-success">
+                                <a href="{{ route('employes.show', $employe->id) }}" class="btn btn-sm btn-success" title="Voir">
                                     <span class="mdi mdi-eye"></span>
                                 </a>
-                                <a href="{{ route('employes.edit', $employe->id) }}" class="btn btn-sm btn-primary">
+                                <a href="{{ route('employes.edit', $employe->id) }}" class="btn btn-sm btn-primary" title="Modifier">
                                     <span class="mdi mdi-pencil"></span>
+                                </a>
+                                <a href="{{ route('employes.historique', $employe->id) }}" class="btn btn-sm btn-outline-info" title="Historique de paiements">
+                                    <i class="ri-history-line"></i>
                                 </a>
                                 <form action="{{ route('employes.destroy', $employe->id) }}" method="POST" class="d-inline">
                                         @csrf

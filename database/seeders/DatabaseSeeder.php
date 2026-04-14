@@ -145,6 +145,9 @@ class DatabaseSeeder extends Seeder
         // ── 7. Pointages d'un mois ─────────────────────────────────
         $this->call(PointageSeeder::class);
 
+        // ── 8. Bulletins de paie ───────────────────────────────────
+        $this->call(BulletinPaieSeeder::class);
+
         $this->command->info('');
         $this->command->info('✓ Seed terminé. Comptes disponibles :');
         $this->command->info('  admin@gestRH.com   → password  (admin)');

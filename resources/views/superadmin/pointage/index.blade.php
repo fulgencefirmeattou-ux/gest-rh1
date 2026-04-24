@@ -10,7 +10,7 @@
         </div>
         <div class="d-flex gap-2 align-items-center">
             <span class="fw-bold fs-4 text-dark" id="horloge">--:--:--</span>
-            <a href="{{ route('pointages.dashboard') }}" class="btn btn-outline-secondary btn-sm">
+            <a href="{{ route('pointages.dashboard', ['date' => $date->toDateString()]) }}" class="btn btn-outline-secondary btn-sm">
                 <i class="ri-dashboard-line me-1"></i>Dashboard
             </a>
             <a href="{{ route('pointages.statistiques') }}" class="btn btn-outline-secondary btn-sm">
@@ -275,7 +275,7 @@
         const inputs = row.querySelectorAll('input[type="time"]');
         inputs.forEach(input => {
             input.disabled = checkbox.checked;
-            input.required = !checkbox.checked;
+            input.required = !checkbox.checked && input.name !== 'heure_fin_pause' && input.name !== 'heure_debut_pause';
             if (checkbox.checked) input.value = '';
         });
     }

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Departement;
+use App\Models\DemandeConge;
+use App\Models\Employe;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -76,7 +78,14 @@ class DepartementController extends Controller
 
     public function destroy(string $id)
     {
-        Departement::findOrFail($id)->delete();
+        $departement = Departement::findOrFail($id);
+
+        Employe::where('departement_id', $id)->each(function ($employe) {
+            $employe->user?->delete();
+            $employe->delete();
+        });
+
+        $departement->delete();
         return redirect()->route('departements.index')->with('success', 'Département supprimé avec succès.');
     }
 
@@ -95,12 +104,44 @@ class DepartementController extends Controller
 
     public function departementIndex()
     {
-        $departements = Departement::with('responsable')->get();
-        return view('superadmin.departements.index', compact('departements'));
+        $user    = auth()->user();
+        $employe = $user->employe;
+
+        if (!$employe) {
+            return back()->with('error', 'Aucun employe trouve.');
+        }
+
+        $departement = Departement::where('responsable_id', $employe->id)->first();
+        if (!$departement) {
+            abort(403, 'Vous n\'etes pas responsable de departement.');
+        }
+
+        $employes_ids = $departement->employes()->pluck('employes.id');
+
+        $conges = DemandeConge::with('employe')
+            ->whereIn('employe_id', $employes_ids)
+            ->where('statut', 'attente_departement')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('superadmin.conges.approbation.departement', compact('conges', 'departement'));
     }
 
     public function ListeDemandeCongeTraiter()
     {
-        return view('conges.traiter.liste');
+        $user    = auth()->user();
+        $employe = $user->employe;
+
+        $departement = Departement::where('responsable_id', $employe?->id)->first();
+
+        $employes_ids = $departement?->employes()->pluck('employes.id') ?? collect();
+
+        $conges = DemandeConge::with('employe')
+            ->whereIn('employe_id', $employes_ids)
+            ->whereIn('statut', ['approuvee', 'rejetee', 'attente_dg', 'modification_demandee'])
+            ->orderBy('updated_at', 'desc')
+            ->get();
+
+        return view('superadmin.conges.traiter.liste', compact('conges'));
     }
 }

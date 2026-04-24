@@ -35,9 +35,9 @@
                     <th style="text-align:left">Employé</th>
                     <th>Date</th>
                     <th>Arrivée</th>
-                    <th>Départ</th>
                     <th>Dbt Pause</th>
                     <th>Fin Pause</th>
+                    <th>Départ</th>
                     <th>Travaillées</th>
                     <th>Sup</th>
                     <th>Manquantes</th>
@@ -56,9 +56,9 @@
                         <td style="text-align:left">{{ $p->employe->nom ?? '—' }} {{ $p->employe->prenom ?? '' }}</td>
                         <td>{{ $p->date->format('d/m/Y') }}</td>
                         <td>{{ $p->heure_arrivee ? \Carbon\Carbon::createFromTimeString($p->heure_arrivee)->format('H:i') : '—' }}</td>
-                        <td>{{ $p->heure_depart  ? \Carbon\Carbon::createFromTimeString($p->heure_depart)->format('H:i')  : '—' }}</td>
                         <td>{{ $p->heure_debut_pause ? \Carbon\Carbon::createFromTimeString($p->heure_debut_pause)->format('H:i') : '—' }}</td>
                         <td>{{ $p->heure_fin_pause   ? \Carbon\Carbon::createFromTimeString($p->heure_fin_pause)->format('H:i')   : '—' }}</td>
+                        <td>{{ $p->heure_depart  ? \Carbon\Carbon::createFromTimeString($p->heure_depart)->format('H:i')  : '—' }}</td>
                         <td><span class="{{ $htC }}">{{ $p->heures_travaillees_format }}</span></td>
                         <td>{{ $p->heures_sup > 0 ? '+'.number_format($p->heures_sup,2).'h' : '—' }}</td>
                         <td>{{ $p->heures_manquantes > 0 ? '-'.number_format($p->heures_manquantes,2).'h' : '—' }}</td>

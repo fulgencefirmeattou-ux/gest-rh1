@@ -282,6 +282,16 @@
             <td colspan="3"></td>
         </tr>
         @endif
+        @if($bulletin->retenue_absences > 0)
+        <tr style="background:#fff3cd;">
+            <td>00640</td>
+            <td class="td-libelle">RETENUE SUR SALAIRE HEURES D'ABSENCE</td>
+            <td class="num">{{ number_format($bulletin->heures_absence, 1, ',', ' ') }} h</td>
+            <td></td><td></td>
+            <td class="num" style="color:#c0392b;font-weight:bold;">{{ number_format($bulletin->retenue_absences, 0, ',', ' ') }}</td>
+            <td colspan="2"></td>
+        </tr>
+        @endif
     </tbody>
 </table>
 

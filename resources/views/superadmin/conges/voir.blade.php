@@ -1,47 +1,66 @@
-@extends('layouts.base')
+@extends('layouts.app')
 @section('title','liste des congés')
 @section('content')
-    <div class="container mt-5">
+<div class="container-fluid mt-3">
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show">{{ session('success') }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    @endif
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show">{{ session('error') }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    @endif
+
+
+        @if($errors->any())
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif  
         <div class="d-flex justify-content-between align-items-center">
-            <h2 class="mb-4 text-start">Listes des congés traité</h2>
-            {{-- <a href="{{ route('conges.create-conge') }}" class="btn btn-primary mb-3 ">Nouvelle demande</a> --}}
+            <h2 class="mb-4 text-start">Mes demandes de congés</h2>
+            <a href="{{ route('conges.create-conge') }}" class="btn btn-primary mb-3 ">Nouvelle demande</a>
         </div>
             @if ($conges->isEmpty())
-                <p class="text-center">Aucune demande de congé traité.</p>
+                <p class="text-center">Aucune demande de congé trouvé.</p>
             @else
                 <div id="yearly-sales-collapse" class="collapse show">
                     <div class="table-responsive">
                         <table class="table table-nowrap table-hover mb-0 text-center" id="btn-editable">
                             <thead class="table-dark">
                                 <tr>
-                                    <th>Nom</th>
                                     <th>Type</th>
                                     <th>Debut</th>
                                     <th>Fin</th>
+                                    <th>Nombre de jours</th>
+                                    <th>Date de reprise</th>
                                     <th>Statut</th>
-                                    {{-- <th>Commentaire</th>--}} 
-                                    <th>Action</th> 
+                                    <th>Commentaire</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($conges as $index => $conge)
                                     <tr>
-                                        <td>{{ $conge->employe->nom }}</td>
-                                        <td>{{ $conge->type_conge }}</td>
+                                        <td><span class="badge bg-secondary">{{ $conge->typeLabel() }}</span></td>
                                         <td>{{ $conge->date_debut_conge->format('d/m/Y') }}</td>
-                                        <td>{{ $conge->date_fin_conge->format('d/m/Y')  }}</td>
-                                        <td>{{ $conge->statut }}</td>
-                                        {{-- <td>{{ $conge->commentaire ?? '_' }}</td> --}}
+                                        <td>{{ $conge->date_fin_conge->format('d/m/Y') }}</td>
+                                        <td>{{ $conge->jours_ouvres }} jours</td>
+                                        <td>{{ $conge->date_retour->format('d/m/Y') ?? '_' }} </td>
+                                        <td><span class="badge bg-{{ $conge->statutColor() }}">{{ $conge->statutLabel() }}</span></td>
+                                        <td>{{ \Illuminate\Support\Str::words($conge->commentaire, 5 , '...') ?? '_' }}</td>
                                         <td>
-                                            <a href="#" class="btn btn-sm btn-info">
+                                            <a href="{{ route('conges.details',$conge->id ) }}" class="btn btn-sm btn-info">
                                                 Voir
                                             </a>
 
-                                            {{-- @if ($conge->statut === 'modification_requested')
+                                            @if ($conge->statut === 'modification_requested')
                                             <a href="#" class="btn btn-sm btn-warning">
                                                 Modifier
                                             </a>
-                                            @endif  --}}
+                                            @endif 
                                         </td>
                                     </tr>
                                 @endforeach

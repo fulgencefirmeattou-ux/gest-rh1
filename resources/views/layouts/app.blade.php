@@ -273,5 +273,7 @@
         <!-- App js -->
         <script src="{{url('assets/js/app.min.js')}}"></script>
 
+        @stack('scripts')
+
     </body>
 </html> 

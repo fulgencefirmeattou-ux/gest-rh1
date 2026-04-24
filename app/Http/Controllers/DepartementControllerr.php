@@ -162,7 +162,7 @@ class DepartementController extends Controller
         ->where('statut', 'attente_departement') 
         ->get();
 
-        return view('conges.approbation.departement', compact('conges'));
+        return view('superadmin.conges.approbation.departement', compact('conges'));
     }
 
     public function ListeDemandeCongeTraiter(){
@@ -175,6 +175,6 @@ class DepartementController extends Controller
         $conges = DemandeConge::whereHas('employe.service', function ($query) use ($departement) {
             $query->where('departement_id', $departement->id);
         })->whereIn('statut', ['attente_dg','approuvee','rejetee'])->get();
-        return view('conges.traiter.liste', compact('conges'));
+        return view('superadmin.conges.traiter.liste', compact('conges'));
     }
 }

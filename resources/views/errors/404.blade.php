@@ -41,7 +41,7 @@
                                 <a href="{{ url()->previous() }}" class="btn btn-soft-secondary">
                                     <i class="ri-arrow-left-line me-1"></i> Retour
                                 </a>
-                                <a href="{{ route('pointages.index') }}" class="btn btn-soft-primary">
+                                <a href="{{ route('admin.dashboard') }}" class="btn btn-soft-primary">
                                     <i class="ri-home-4-line me-1"></i> Tableau de bord
                                 </a>
                             </div>

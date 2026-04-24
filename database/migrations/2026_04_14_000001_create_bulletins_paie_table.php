@@ -68,6 +68,10 @@ return new class extends Migration
             $table->string('statut', 20)->default('brouillon'); // brouillon | valide | paye
             $table->string('pdf_path')->nullable();
             $table->timestamps();
+
+            // ── Heure d'absence ─────────────────────────────────────────────
+            $table->float('heures_absence')->nullable()->default(0);
+            $table->float('retenue_absences')->nullable()->default(0);
         });
     }
 

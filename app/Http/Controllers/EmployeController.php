@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use App\Models\BulletinPaie;
 use App\Models\Departement;
 use App\Models\Employe;
+use App\Models\Pointage;
 use App\Models\Poste;
 use App\Models\TypeContrat;
 use App\Models\User;
@@ -38,7 +41,7 @@ class EmployeController extends Controller
             'lieu_naissance'         => 'nullable|string|max:255',
             'telephone'              => 'required|string|max:20',
             'email'                  => 'required|email|unique:employes,email|unique:users,email',
-            'password'               => 'required|string|min:8|confirmed',
+            'password'               => 'nullable|string|min:8|confirmed',
             'adresse'                => 'nullable|string|max:500',
             'photo_profil'           => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
             'curriculum_vitae'       => 'nullable|mimes:pdf,doc,docx|max:10240',
@@ -54,7 +57,6 @@ class EmployeController extends Controller
             'telephone.required'        => 'Le téléphone est obligatoire.',
             'email.required'            => "L'email est obligatoire.",
             'email.unique'              => "Cet email est déjà utilisé.",
-            'password.required'         => 'Le mot de passe est obligatoire.',
             'password.min'              => 'Le mot de passe doit contenir au moins 8 caractères.',
             'password.confirmed'        => 'La confirmation du mot de passe ne correspond pas.',
             'salaire.required'          => 'Le salaire est obligatoire.',
@@ -94,11 +96,12 @@ class EmployeController extends Controller
         $validated['matricule'] = $matricule;
 
         // Création automatique du compte utilisateur
+        $password = $request->filled('password') ? $request->password : Str::random(10);
         $user = User::create([
             'nom'      => $request->nom,
             'prenom'   => $request->prenom,
             'email'    => $request->email,
-            'password' => bcrypt($request->password),
+            'password' => bcrypt($password),
             'login'    => $matricule,
             'role'     => 'employe',
         ]);
@@ -153,6 +156,7 @@ class EmployeController extends Controller
             'poste_id'               => 'required|exists:postes,id',
             'type_contrat_id'        => 'required|exists:type_contrats,id',
             'date_embauche'          => 'required|date',
+            'password'               => 'nullable|string|min:8|confirmed',
         ], [
             'nom.required'             => 'Le nom est obligatoire.',
             'prenom.required'          => 'Le prénom est obligatoire.',
@@ -166,6 +170,8 @@ class EmployeController extends Controller
             'date_embauche.required'   => "La date d'embauche est obligatoire.",
             'curriculum_vitae.mimes'   => 'Le CV doit être en PDF, DOC ou DOCX.',
             'lettre_motivation.mimes'  => 'La lettre doit être en PDF, DOC ou DOCX.',
+            'password.min'             => 'Le mot de passe doit contenir au moins 8 caractères.',
+            'password.confirmed'       => 'La confirmation du mot de passe ne correspond pas.',
         ]);
 
         if ($request->hasFile('photo_profil')) {
@@ -186,7 +192,12 @@ class EmployeController extends Controller
             $validated['lettre_motivation'] = 'documents/employes/' . $lmName;
         }
 
+        unset($validated['password'], $validated['password_confirmation']);
         $employe->update($validated);
+
+        if ($request->filled('password')) {
+            $employe->user?->update(['password' => bcrypt($request->password)]);
+        }
 
         return redirect()->route('employes.index')->with('success', "Modification de l'employé réussie.");
     }
@@ -194,6 +205,8 @@ class EmployeController extends Controller
     public function destroy(string $id)
     {
         $employe = Employe::findOrFail($id);
+        BulletinPaie::where('employe_id', $employe->id)->delete();
+        Pointage::where('employe_id', $employe->user_id)->delete();
         $employe->delete();
         return redirect()->route('employes.index')->with('success', 'Employé archivé avec succès.');
     }

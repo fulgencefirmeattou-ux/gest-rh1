@@ -35,7 +35,7 @@
                 </div>
                 <div class="col-md-2">
                     <label class="form-label mb-1 small">Mois</label>
-                    <input type="month" name="mois" value="{{ request('mois') }}" class="form-control form-control-sm">
+                    <input type="month" name="mois" class="form-control form-control-sm" value="{{ request('mois') }}">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label mb-1 small">Statut</label>

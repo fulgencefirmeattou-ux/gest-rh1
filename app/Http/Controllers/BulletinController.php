@@ -22,11 +22,11 @@ class BulletinController extends Controller
         if ($request->filled('employe_id')) {
             $query->where('employe_id', $request->employe_id);
         }
-        if ($request->filled('mois')) {
-            $query->where('mois', $request->mois);
-        }
         if ($request->filled('statut')) {
             $query->where('statut', $request->statut);
+        }
+        if ($request->filled('mois')) {
+            $query->where('mois', $request->mois);
         }
 
         $bulletins = $query->paginate(20)->withQueryString();
@@ -75,7 +75,7 @@ class BulletinController extends Controller
     {
         $data = $request->only([
             'salaire_base', 'avantage_nature', 'indemnite_transport',
-            'brut_imposable', 'nbre_parts', 'cnps_plafond', 'cmu_base',
+            'heures_absence', 'brut_imposable', 'nbre_parts', 'cnps_plafond', 'cmu_base',
         ]);
         return response()->json(BulletinPaie::calculer($data));
     }
@@ -112,7 +112,7 @@ class BulletinController extends Controller
 
         $data = array_merge($request->only([
             'employe_id', 'mois',
-            'salaire_base', 'avantage_nature', 'indemnite_transport',
+            'salaire_base', 'avantage_nature', 'indemnite_transport', 'heures_absence',
             'brut_imposable', 'nbre_parts', 'cnps_plafond', 'cmu_base',
             'retenue_is', 'retenue_cn', 'retenue_igr', 'retenue_cnps', 'retenue_cmu',
             'is_employeur', 'fdfp_ta', 'fdfp_fpc',
@@ -138,7 +138,10 @@ class BulletinController extends Controller
             $data['total_charges_patronales']    = $data['total_charges_fiscales_emp'] + $data['total_charges_sociales_emp'];
             $data['total_retenues']              = ($data['retenue_is'] ?? 0) + ($data['retenue_cn'] ?? 0) + ($data['retenue_igr'] ?? 0) + ($data['retenue_cnps'] ?? 0) + ($data['retenue_cmu'] ?? 0);
             $data['salaire_net']                 = $data['salaire_brut'] - $data['total_retenues'];
-            $data['net_a_payer']                 = $data['salaire_net'] + ($data['indemnite_transport'] ?? 0);
+            $salaireBase = (float)($data['salaire_base'] ?? 0);
+            $heuresAbsence = (float)($data['heures_absence'] ?? 0);
+            $data['retenue_absences']            = round(($salaireBase / 26 / 8) * $heuresAbsence);
+            $data['net_a_payer']                 = $data['salaire_net'] + ($data['indemnite_transport'] ?? 0) - $data['retenue_absences'];
         }
 
         $bulletin = BulletinPaie::create($data);

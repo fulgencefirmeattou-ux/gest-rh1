@@ -36,7 +36,7 @@
                     @foreach($contrats as $contrat)
                         <tr>
                             <td>{{ $contrats->firstItem() + $loop->index }}</td>
-                            <td>{{ $contrat->employe->nom }} {{ $contrat->employe->prenom }}</td>
+                            <td>{{ $contrat->employe?->nom ?? '—' }} {{ $contrat->employe?->prenom }}</td>
                             <td>{{ $contrat->type_contrat }}</td>
                             <td>{{ number_format($contrat->salaire_base, 0, ',', ' ') }} FCFA</td>
                             <td>{{ \Carbon\Carbon::parse($contrat->date_debut)->format('d/m/Y') }}</td>

@@ -1,7 +1,7 @@
-@extends('layouts.base')
+@extends('layouts.app')
 @section('title', 'Traitement des absences')
 @section('content')
-    <div class="container mt-5">
+    <div class="container mt-3">
         <div class="d-flex justify-content-between align-items-center">
             <h2 class="mb-4 text-start">Les demandes d'absences traitées</h2>
             {{-- <a href="{{ route('justificatifs.absence') }}" class="btn btn-primary mb-3 ">Justifié mon absence</a> --}}
@@ -30,7 +30,7 @@
                                 @foreach ($absences as $index => $absence)
                                     <tr>
                                         <td>{{ $absence->employe->nom }} {{ $absence->employe->prenom }}</td>
-                                        <td>{{ $absence->type_absence }}</td>
+                                        <td><span class="badge bg-secondary">{{ $absence->typeLabel() }}</span></td>
                                         <td>{{ $absence->date_absence->format('d/m/Y') }}</td>
                                         {{-- <td>{{ $conge->date_fin_conge->format('d/m/Y') }}</td> --}}
                                         {{-- <td>{{ $conge->jours_ouvres }} jours</td> --}}
@@ -47,18 +47,7 @@
                                                 Aucun justificatif
                                             @endif
                                         </td>
-                                        <td>
-
-                                            {{-- {{ $absence->statut }} --}}
-                                            
-                                            @if( $absence->statut  == 'en_attente')
-                                                <span class="badge bg-warning">En attente</span>
-                                            @elseif( $absence->statut == 'validee')
-                                                <span class="badge bg-success">Validée</span>
-                                            @else
-                                                <span class="badge bg-danger">Refusée</span>
-                                            @endif 
-                                        </td>
+                                        <td><span class="badge bg-{{ $absence->statutColor() }}">{{ $absence->statutLabel() }}</span></td>
                                         {{-- <td> on verra plus tard
                                             <a href="{{ route('conges.details',$conge->id ) }}" class="btn btn-sm btn-info">
                                                 Voir

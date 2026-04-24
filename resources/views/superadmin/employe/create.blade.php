@@ -122,12 +122,12 @@
             <div class="row mb-3">
                 <div class="col-md-4">
                     <label for="password" class="form-label">Mot de passe du compte</label>
-                    <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror" required>
+                    <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror">
                     @error('password')<small class="text-danger">{{ $message }}</small>@enderror
                 </div>
                 <div class="col-md-4">
                     <label for="password_confirmation" class="form-label">Confirmer le mot de passe</label>
-                    <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" required>
+                    <input type="password" name="password_confirmation" id="password_confirmation" class="form-control">
                 </div>
                 <div class="col-md-4">
                     <label for="salaire" class="form-label">Salaire (FCFA)</label>

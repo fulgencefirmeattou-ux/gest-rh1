@@ -155,7 +155,7 @@ class ServiceController extends Controller
             ->where('statut', 'attente_service')
             ->get();
 
-        return view('conges.approbation.service', compact('conges'));
+        return view('superadmin.conges.approbation.service', compact('conges'));
     }
 
     public function ListeDemandeCongeTraiter(){
@@ -174,6 +174,6 @@ class ServiceController extends Controller
         ])
         ->get();
 
-       return view('conges.traiter.liste-service', compact('conges'));
+       return view('superadmin.conges.traiter.liste-service', compact('conges'));
     }
 }

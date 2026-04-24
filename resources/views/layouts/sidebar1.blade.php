@@ -14,7 +14,7 @@
                 <span>Tableau de bord</span>
                 </a> --}}
 
-                <a href="#" class="side-nav-link">
+                <a href="{{ route('admin.dashboard') }}" class="side-nav-link">
                     <i class="ri-dashboard-3-line"></i>
                     <span>Tableau de bord</span>
                 </a>
@@ -83,6 +83,56 @@
                     <span>Bulletins de paie</span>
                 </a>
             </li>
+            @php
+                $user        = auth()->user();
+                $peutValiderDgRh        = $user->isDG() || $user->isRH() || $user->isAdmin();
+                $peutTraiterAbsences    = $user->isDG() || $user->isRH() || $user->isAdmin();
+                $aMenuAbsences          = ($user->employe_id !== null) || $peutValiderDgRh || $peutTraiterAbsences;
+            @endphp
+
+            @if($aMenuAbsences)
+            <li class="side-nav-item">
+                <a href="#sidebarAbsences" data-bs-toggle="collapse" class="side-nav-link">
+                    <i class="ri-calendar-check-line"></i>
+                    <span>Absences & Congés</span>
+                    <span class="menu-arrow"></span>
+                </a>
+                <div class="collapse" id="sidebarAbsences">
+                    <ul class="side-nav-second-level">
+
+                        @if($user->employe_id !== null)
+                        <li>
+                            <a href="{{ route('conges.voir') }}">
+                                <i class="ri-plane-line me-1"></i> Mes congés
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('justificatifs.absence.liste') }}">
+                                <i class="ri-error-warning-line me-1"></i> Mes absences
+                            </a>
+                        </li>
+                        @endif
+
+@if($peutValiderDgRh)
+                        <li>
+                            <a href="{{ route('conges.approbation.dgRh') }}">
+                                <i class="ri-checkbox-circle-line me-1"></i> Valider — DG/RH
+                            </a>
+                        </li>
+                        @endif
+
+                        @if($peutTraiterAbsences)
+                        <li>
+                            <a href="{{ route('justisificatifs.absence.rh') }}">
+                                <i class="ri-file-list-3-line me-1"></i> Traiter absences
+                            </a>
+                        </li>
+                        @endif
+
+                    </ul>
+                </div>
+            </li>
+            @endif
 
             <li class="side-nav-item">
                 <a href="{{ route('roles.index') }}" class="side-nav-link">

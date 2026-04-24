@@ -1,4 +1,4 @@
-@extends('layouts.base')
+@extends('layouts.app')
 @section('title', 'voir ma demande d\'absence')
 @section('content')
     <div class="container-fluid">
@@ -108,43 +108,57 @@
                                         <table class="table table-condensed mb-0 border-top">
                                             <tbody>
                                                 <tr>
-                                                    <th scope="row">Type de conge</th>
-                                                    <td>{{ $absence->type_absence }}</td>
+                                                    <th scope="row">Type d'absence</th>
+                                                    <td><span class="badge bg-secondary">{{ $absence->typeLabel() }}</span></td>
                                                 </tr>
                                                 <tr>
-                                                    <th scope="row">Date d'absence</th>
-                                                    <td>{{  $absence->date_absence->format('d/m/Y') ? : '-' }}</td>
-                                                     {{-- $conge->date_debut_conge->format('d/m/Y')  --}}
+                                                    <th scope="row">Date de début</th>
+                                                    <td>{{ $absence->date_absence->format('d/m/Y') }}</td>
                                                 </tr>
-
-                                                {{-- <tr>
-                                                    <th scope="row">Date de fin des congés</th>
-                                                    <td>{{$conge->date_fin_conge ? $conge->date_fin_conge->format('d/m/Y') : '-' }}</td>
-                                                </tr> --}}
+                                                @if($absence->date_fin_absence)
+                                                <tr>
+                                                    <th scope="row">Date de fin</th>
+                                                    <td>{{ $absence->date_fin_absence->format('d/m/Y') }}</td>
+                                                </tr>
+                                                @endif
+                                                @if($absence->heure_debut)
+                                                <tr>
+                                                    <th scope="row">Heures</th>
+                                                    <td>{{ $absence->heure_debut }} → {{ $absence->heure_fin ?? '?' }}</td>
+                                                </tr>
+                                                @endif
                                                 <tr>
                                                     <th scope="row">Motif</th>
-                                                    <td>{{$absence->motif ?? '-' }}</td>
+                                                    <td>{{ $absence->motif ?? '—' }}</td>
                                                 </tr>
                                                 <tr>
-                                                    <th scope="row">Justificatifs d'absence</th>
-                                                    <td>{{$absence->justificatif ?? '-' }}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">Statut de la demande</th>
-                                                    <td>{{ $absence->statut }}</td>
-                                                    
-                                                </tr>
-                                                {{-- <tr>
-                                                    <th scope="row">Commentaire</th>
-                                                    <td>{{ $conge->commentaire ?? '_' }} </td>
-                                                </tr> --}}
-                                                {{-- <tr>
-                                                    <th scope="row">Date de fin</th>
+                                                    <th scope="row">Justificatif</th>
                                                     <td>
-                                                        {{ $employes->date_fin ? $employes->date_fin->format('d/m/Y') : '-' }}
+                                                        @if($absence->justificatif)
+                                                            <a href="{{ route('justificatifs.absence.download', $absence->id) }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                                                                <i class="ri-download-line"></i> Télécharger
+                                                            </a>
+                                                        @else
+                                                            <span class="text-muted">Aucun</span>
+                                                        @endif
                                                     </td>
-                                                </tr> --}}
-
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">Statut</th>
+                                                    <td><span class="badge bg-{{ $absence->statutColor() }}">{{ $absence->statutLabel() }}</span></td>
+                                                </tr>
+                                                @if($absence->commentaire_rh)
+                                                <tr>
+                                                    <th scope="row">Commentaire RH</th>
+                                                    <td class="text-muted fst-italic">{{ $absence->commentaire_rh }}</td>
+                                                </tr>
+                                                @endif
+                                                @if($absence->traite_par)
+                                                <tr>
+                                                    <th scope="row">Traité par</th>
+                                                    <td>{{ $absence->traitePar->name ?? '—' }} — {{ $absence->traite_le ? \Carbon\Carbon::parse($absence->traite_le)->format('d/m/Y H:i') : '' }}</td>
+                                                </tr>
+                                                @endif
                                             </tbody>
                                         </table>
                                     </div> <!-- end profile-desk -->

@@ -234,96 +234,78 @@
                 </div>
             </li>
 
+            {{-- ── Notifications dynamiques ── --}}
+            @php
+                $notifs = auth()->user()->unreadNotifications->take(8);
+                $nbNotifs = auth()->user()->unreadNotifications->count();
+            @endphp
             <li class="dropdown notification-list">
                 <a class="nav-link dropdown-toggle arrow-none" data-bs-toggle="dropdown" href="#" role="button"
                     aria-haspopup="false" aria-expanded="false">
                     <i class="ri-notification-3-line fs-22"></i>
-                    <span class="noti-icon-badge badge text-bg-pink">3</span>
+                    @if($nbNotifs > 0)
+                        <span class="noti-icon-badge badge text-bg-pink">{{ $nbNotifs > 9 ? '9+' : $nbNotifs }}</span>
+                    @endif
                 </a>
                 <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated dropdown-lg py-0">
                     <div class="p-2 border-top-0 border-start-0 border-end-0 border-dashed border">
                         <div class="row align-items-center">
                             <div class="col">
-                                <h6 class="m-0 fs-16 fw-semibold"> Notification</h6>
+                                <h6 class="m-0 fs-16 fw-semibold">Notifications <span class="badge bg-secondary ms-1">{{ $nbNotifs }}</span></h6>
                             </div>
+                            @if($nbNotifs > 0)
                             <div class="col-auto">
-                                <a href="javascript: void(0);" class="text-dark text-decoration-underline">
-                                    <small>Clear All</small>
-                                </a>
+                                <form method="POST" action="{{ route('notifications.markAllRead') }}" class="d-inline">
+                                    @csrf
+                                    <button type="submit" class="btn btn-link p-0 text-dark text-decoration-underline">
+                                        <small>Tout marquer lu</small>
+                                    </button>
+                                </form>
                             </div>
+                            @endif
                         </div>
                     </div>
 
-                    <div style="max-height: 300px;" data-simplebar>
-                        <!-- item-->
-                        <a href="javascript:void(0);" class="dropdown-item notify-item">
-                            <div class="notify-icon bg-primary-subtle">
-                                <i class="mdi mdi-comment-account-outline text-primary"></i>
+                    <div style="max-height: 320px;" data-simplebar>
+                        @forelse($notifs as $notif)
+                            @php $data = $notif->data; @endphp
+                            <a href="{{ $data['url'] ?? '#' }}"
+                               onclick="markRead('{{ $notif->id }}')"
+                               class="dropdown-item notify-item {{ $notif->read_at ? '' : 'unread-notif' }}">
+                                <div class="notify-icon bg-{{ $data['couleur'] ?? 'primary' }}-subtle">
+                                    <i class="{{ $data['icone'] ?? 'ri-notification-line' }} text-{{ $data['couleur'] ?? 'primary' }}"></i>
+                                </div>
+                                <p class="notify-details fw-semibold mb-0">{{ $data['titre'] ?? '' }}</p>
+                                <small class="text-muted">{{ $data['message'] ?? '' }}</small>
+                                <br><small class="noti-time text-muted">{{ $notif->created_at->diffForHumans() }}</small>
+                            </a>
+                        @empty
+                            <div class="text-center text-muted py-4">
+                                <i class="ri-notification-off-line fs-24"></i>
+                                <p class="mb-0 mt-1 small">Aucune notification</p>
                             </div>
-                            <p class="notify-details">Caleb Flakelar commented on Admin
-                                <small class="noti-time">1 min ago</small>
-                            </p>
-                        </a>
-
-                        <!-- item-->
-                        <a href="javascript:void(0);" class="dropdown-item notify-item">
-                            <div class="notify-icon bg-warning-subtle">
-                                <i class="mdi mdi-account-plus text-warning"></i>
-                            </div>
-                            <p class="notify-details">New user registered.
-                                <small class="noti-time">5 hours ago</small>
-                            </p>
-                        </a>
-
-                        <!-- item-->
-                        <a href="javascript:void(0);" class="dropdown-item notify-item">
-                            <div class="notify-icon bg-danger-subtle">
-                                <i class="mdi mdi-heart text-danger"></i>
-                            </div>
-                            <p class="notify-details">Carlos Crouch liked
-                                <small class="noti-time">3 days ago</small>
-                            </p>
-                        </a>
-
-                        <!-- item-->
-                        <a href="javascript:void(0);" class="dropdown-item notify-item">
-                            <div class="notify-icon bg-pink-subtle">
-                                <i class="mdi mdi-comment-account-outline text-pink"></i>
-                            </div>
-                            <p class="notify-details">Caleb Flakelar commented on Admi
-                                <small class="noti-time">4 days ago</small>
-                            </p>
-                        </a>
-
-                        <!-- item-->
-                        <a href="javascript:void(0);" class="dropdown-item notify-item">
-                            <div class="notify-icon bg-purple-subtle">
-                                <i class="mdi mdi-account-plus text-purple"></i>
-                            </div>
-                            <p class="notify-details">New user registered.
-                                <small class="noti-time">7 days ago</small>
-                            </p>
-                        </a>
-
-                        <!-- item-->
-                        <a href="javascript:void(0);" class="dropdown-item notify-item">
-                            <div class="notify-icon bg-success-subtle">
-                                <i class="mdi mdi-heart text-success"></i>
-                            </div>
-                            <p class="notify-details">Carlos Crouch liked <b>Admin</b>.
-                                <small class="noti-time">Carlos Crouch liked</small>
-                            </p>
-                        </a>
+                        @endforelse
                     </div>
 
-                    <!-- All-->
-                    <a href="javascript:void(0);"
-                        class="dropdown-item text-center text-primary text-decoration-underline fw-bold notify-item border-top border-light py-2">
-                        View All
+                    <a href="{{ route('notifications.index') }}"
+                        class="dropdown-item text-center text-primary fw-bold notify-item border-top border-light py-2">
+                        Voir toutes les notifications
                     </a>
-
                 </div>
             </li>
+
+            <form id="markReadForm" method="POST" style="display:none">
+                @csrf
+                <input type="hidden" name="_method" value="PATCH">
+            </form>
+            <script>
+                function markRead(id) {
+                    fetch('/notifications/' + id + '/mark-read', {
+                        method: 'PATCH',
+                        headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]') ? document.querySelector('meta[name=csrf-token]').content : '{{ csrf_token() }}', 'Content-Type': 'application/json' }
+                    });
+                }
+            </script>
 
             <li class="d-none d-sm-inline-block">
                 <a class="nav-link" data-bs-toggle="offcanvas" href="#theme-settings-offcanvas">

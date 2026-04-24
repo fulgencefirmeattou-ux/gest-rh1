@@ -1,9 +1,9 @@
-@extends('layouts.base')
+@extends('layouts.app')
 @section('title','liste des utilisateurs')
 @section('content')
     <section class="row">
         <div class="col-12 col-lg-12"></div>
-            <div class="container py-5">
+            <div class="container py-3">
                 <h2 class="mb-4 text-start">Nouvelle demande de congé</h2>
                 @if(session('success'))
                     <div class="alert alert-success">{{ session('success') }}</div>
@@ -27,9 +27,13 @@
 
                     <label>Type de congé</label>
                     <select name="type_conge" class="form-select" required>
-                        <option value="annuel">Annuel</option>
-                        <option value="special">Spécial</option>
-                        <option value="exceptionnel">Exceptionnel</option>
+                        <option value="">-- Sélectionner --</option>
+                        <option value="conge_paye">Congé payé</option>
+                        <option value="maladie">Maladie</option>
+                        <option value="permission_courte">Permission courte</option>
+                        <option value="exceptionnel">Congé exceptionnel</option>
+                        <option value="special">Congé spécial</option>
+                        <option value="autre">Autre</option>
                     </select><br>
 
                     <label>Date de début</label>

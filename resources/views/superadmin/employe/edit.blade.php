@@ -142,6 +142,18 @@
 
                 <div class="row mb-3">
                     <div class="col-md-6">
+                        <label for="password" class="form-label">Mot de passe du compte <small class="text-muted">(laisser vide pour ne pas modifier)</small></label>
+                        <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror">
+                        @error('password')<small class="text-danger">{{ $message }}</small>@enderror
+                    </div>
+                    <div class="col-md-6">
+                        <label for="password_confirmation" class="form-label">Confirmer le mot de passe</label>
+                        <input type="password" name="password_confirmation" id="password_confirmation" class="form-control">
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
                         <label for="salaire" class="form-label">Salaire (FCFA)</label>
                         <input type="number" name="salaire" id="salaire" class="form-control" value="{{ old('salaire', $employe->salaire) }}" min="0" required>
                         @error('salaire')<small class="text-danger">{{ $message }}</small>@enderror
@@ -198,6 +210,8 @@
                         value="{{ old('date_embauche', $employe->date_embauche ? \Carbon\Carbon::parse($employe->date_embauche)->format('Y-m-d') : '') }}" required>
                     @error('date_embauche')<small class="text-danger">{{ $message }}</small>@enderror
                 </div>
+
+               
 
                 <button type="submit" class="btn btn-primary w-100">Enregistrer les modifications</button>
             </form>

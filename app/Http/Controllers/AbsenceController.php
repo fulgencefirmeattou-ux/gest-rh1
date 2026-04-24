@@ -2,193 +2,189 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Absence;
+use App\Models\User;
+use App\Notifications\AbsenceNotification;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Response;
 
 class AbsenceController extends Controller
 {
-    public function index(){
-        $absences = Absence::where('employe_id', auth()->user()->employe->id)->get();
-        return view('justificatifs.listeAbsence', compact('absences'));
+    private function autoriserRhDg(): void
+    {
+        if (!in_array(auth()->user()->role, ['dg', 'rh', 'admin'])) {
+            abort(403, "Accès non autorisé.");
+        }
     }
 
-    public function create(){
-        return view('justificatifs.absence');
+    private function notifierRhDg(Absence $absence, string $type): void
+    {
+        User::whereIn('role', ['rh', 'dg', 'admin'])->get()
+            ->each(fn($user) => $user->notify(new AbsenceNotification($absence, $type)));
     }
+
+    public function index()
+    {
+        $employe = auth()->user()->employe;
+        if (!$employe) {
+            return back()->withErrors(['employe' => "Vous n'êtes pas enregistré comme employé."]);
+        }
+        $absences = Absence::where('employe_id', $employe->id)->orderBy('date_absence', 'desc')->get();
+        return view('superadmin.justificatifs.listeAbsence', compact('absences', 'employe'));
+    }
+
+    public function create()
+    {
+        $employe = auth()->user()->employe;
+        return view('superadmin.justificatifs.absence', compact('employe'));
+    }
+
     public function store(Request $request)
     {
+        $employe = auth()->user()->employe;
+        if (!$employe) {
+            return back()->withErrors(['employe' => "Vous n'êtes pas enregistré comme employé."]);
+        }
+
+        if ($request->type_absence === 'permission_courte' && $employe->soldePermissionsRestant() <= 0) {
+            return back()->withErrors(['type_absence' => "Solde de permissions épuisé ({$employe->permissions_prises}/10 utilisées)."])->withInput();
+        }
+
         $request->validate([
-            'type_absence' => 'required',
-            'date_absence' => 'required|date',
-            'motif' => 'nullable|string',
-            'justificatif' => 'nullable|file|max:2048',
+            'type_absence'     => 'required|in:maladie,retard,permission_courte,absence_non_justifiee,rendez_vous,autre',
+            'date_absence'     => 'required|date',
+            'date_fin_absence' => 'nullable|date|after_or_equal:date_absence',
+            'heure_debut'      => 'nullable|date_format:H:i',
+            'heure_fin'        => 'nullable|date_format:H:i',
+            'motif'            => 'nullable|string|max:1000',
+            'justificatif'     => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ]);
 
         $path = null;
-
         if ($request->hasFile('justificatif')) {
-            $file = $request->file('justificatif');
-
-            // stockage dans storage/app/public/justificatifs_absence
-            $path = $file->store('justificatifs_absence', 'public');
+            $path = $request->file('justificatif')->store('justificatifs_absence', 'public');
         }
 
-        Absence::create([
-            'employe_id'   => auth()->user()->employe->id,
-            'type_absence' => $request->type_absence,
-            'date_absence' => $request->date_absence,
-            'motif'        => $request->motif,
-            'justificatif' => $path, // ✅ chemin correct
-            'statut'       => 'en_attente',
+        $absence = Absence::create([
+            'employe_id'       => $employe->id,
+            'type_absence'     => $request->type_absence,
+            'date_absence'     => $request->date_absence,
+            'date_fin_absence' => $request->date_fin_absence,
+            'heure_debut'      => $request->heure_debut,
+            'heure_fin'        => $request->heure_fin,
+            'motif'            => $request->motif,
+            'justificatif'     => $path,
+            'statut'           => 'en_attente',
         ]);
 
-        return redirect()
-            ->route('justificatifs.absence.liste')
-            ->with('success', 'Absence déclarée et envoyée au responsable.');
-    }
+        $this->notifierRhDg($absence, 'nouvelle');
 
+        return redirect()->route('justificatifs.absence.liste')
+            ->with('success', 'Absence déclarée. Les RH ont été notifiés.');
+    }
 
     public function rhIndex()
     {
-        $user = auth()->user();
-        $role = $user->role;
-
-        if (!in_array($user->role, ['dg', 'rh'])) {
-            abort(403, "Vous n'êtes pas autorisé à traiter cette demande.");
-        }
-        $absences = Absence::where('statut', 'en_attente')->get();
-
-        return view('justificatifs.validation', compact('absences'));
+        $this->autoriserRhDg();
+        $absences = Absence::with('employe')->where('statut', 'en_attente')->orderBy('date_absence', 'desc')->get();
+        return view('superadmin.justificatifs.validation', compact('absences'));
     }
 
-
-    public function approve($id)
+    public function approve(Request $request, $id)
     {
-        $absence = Absence::findOrFail($id);
+        $this->autoriserRhDg();
+        $request->validate(['commentaire_rh' => 'nullable|string|max:500']);
 
-        $user = auth()->user();
-        $role = $user->role;
+        $absence = Absence::with('employe')->findOrFail($id);
+        $absence->update([
+            'statut'         => 'validee',
+            'commentaire_rh' => $request->commentaire_rh,
+            'traite_par'     => auth()->id(),
+            'traite_le'      => now(),
+        ]);
 
-        if (!in_array($user->role, ['dg', 'rh'])) {
-            abort(403, "Vous n'êtes pas autorisé à traiter cette demande.");
+        if ($absence->type_absence === 'permission_courte' && $absence->employe) {
+            $absence->employe->increment('permissions_prises');
         }
 
-        $absence->update(['statut' => 'validee']);
-        $absence->save();
+        if ($absence->employe?->user) {
+            $absence->employe->user->notify(new AbsenceNotification($absence, 'validee'));
+        }
 
-        return back()->with('success', "Absence approuvée avec succès.");
+        return back()->with('success', 'Absence validée.');
     }
 
-    public function reject($id)
+    public function reject(Request $request, $id)
     {
-        $absence = Absence::findOrFail($id);
+        $this->autoriserRhDg();
+        $request->validate(['commentaire_rh' => 'nullable|string|max:500']);
 
-        $user = auth()->user();
-        $role = $user->role;
+        $absence = Absence::with('employe')->findOrFail($id);
+        $absence->update([
+            'statut'         => 'rejetee',
+            'commentaire_rh' => $request->commentaire_rh,
+            'traite_par'     => auth()->id(),
+            'traite_le'      => now(),
+        ]);
 
-        if (!in_array($user->role, ['dg', 'rh'])) {
-            abort(403, "Vous n'êtes pas autorisé à traiter cette demande.");
+        if ($absence->employe?->user) {
+            $absence->employe->user->notify(new AbsenceNotification($absence, 'rejetee'));
         }
 
-        $absence->update(['statut' => 'rejetee']);
-        $absence->save();
-
-        return back()->with('success', "Absence rejetée avec succès.");
+        return back()->with('success', 'Absence rejetée.');
     }
 
-    public function ListeDemandeAbsenceTraiter(){
-        $user = auth()->user();
-        $role = $user->role;
-
-       if (!in_array($user->role, ['dg', 'rh'])) {
-            abort(403, "Vous n'êtes pas autorisé à accéder à cette section.");
-        }
-
-        $absences = Absence::whereIn('statut', ['validee','rejetee'])->get();
-        return view('justificatifs.absence-traiter', compact('absences'));
+    public function ListeDemandeAbsenceTraiter()
+    {
+        $this->autoriserRhDg();
+        $absences = Absence::with('employe')->whereIn('statut', ['validee', 'rejetee'])->orderBy('updated_at', 'desc')->get();
+        return view('superadmin.justificatifs.absence-traiter', compact('absences'));
     }
 
     public function show($id)
     {
-        $absence = Absence::findOrFail($id);
-        return view('justificatifs.absence-details', compact('absence'));
+        $absence = Absence::with('employe')->findOrFail($id);
+        return view('superadmin.justificatifs.absence-details', compact('absence'));
     }
-
-    // public function resubmit($id)
-    // {
-    //     $absence = Absence::findOrFail($id);
-
-    //     if ($absence->statut !== 'en_attente') {
-    //         return back()->with('error', "Seules les absences en_attente peuvent être renvoyées.");
-    //     }
-
-    //     $absence->update(['statut' => 'en_attente']);
-    //     $absence->save();
-
-    //     return back()->with('success', "Absence renvoyée pour réévaluation.");
-    // }
 
     public function resubmit(Request $request, $id)
     {
+        $employe = auth()->user()->employe;
         $absence = Absence::findOrFail($id);
 
+        if ($absence->employe_id !== $employe?->id) abort(403);
         if ($absence->statut !== 'en_attente') {
-            return back()->with('error', "Seules les absences en_attente peuvent être renvoyées.");
+            return back()->with('error', 'Seules les absences en attente peuvent être modifiées.');
         }
 
         $request->validate([
-            'type_absence' => 'required',
+            'type_absence' => 'required|in:maladie,retard,permission_courte,absence_non_justifiee,rendez_vous,autre',
             'date_absence' => 'required|date',
-            'motif' => 'nullable|string',
-            'justificatif' => 'nullable|file|max:2048',
+            'motif'        => 'nullable|string|max:1000',
+            'justificatif' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ]);
 
-        $filename = $absence->justificatif; // garder l'ancien si pas de nouveau fichier
-
+        $path = $absence->justificatif;
         if ($request->hasFile('justificatif')) {
-            $file = $request->file('justificatif');
-
-            $directory = storage_path('app/public/justificatifs_absence');
-            if (!file_exists($directory)) {
-                mkdir($directory, 0777, true);
-            }
-
-            $filename = 'absence_'.$absence->id.'_'.time().'.'.$file->getClientOriginalExtension();
-            $file->move($directory, $filename);
-            $filename = 'justificatifs_absence/' . $filename;
+            if ($path) Storage::disk('public')->delete($path);
+            $path = $request->file('justificatif')->store('justificatifs_absence', 'public');
         }
 
         $absence->update([
             'type_absence' => $request->type_absence,
             'date_absence' => $request->date_absence,
-            'motif' => $request->motif,
-            'justificatif' => $filename,
-            'statut' => 'en_attente',
+            'motif'        => $request->motif,
+            'justificatif' => $path,
         ]);
 
         return redirect()->route('justificatifs.absence.liste')->with('success', 'Absence mise à jour.');
     }
-
-
-   
 
     public function download(Absence $absence)
     {
         if (!$absence->justificatif || !Storage::disk('public')->exists($absence->justificatif)) {
             abort(404);
         }
-
         return Storage::disk('public')->download($absence->justificatif);
     }
-
-
-
-
-
 }

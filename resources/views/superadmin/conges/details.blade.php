@@ -1,4 +1,4 @@
-@extends('layouts.base')
+@extends('layouts.app')
 @section('title', 'voir ma demande de congé')
 @section('content')
     <div class="container-fluid">
@@ -106,8 +106,8 @@
                                         <table class="table table-condensed mb-0 border-top">
                                             <tbody>
                                                 <tr>
-                                                    <th scope="row">Type de conge</th>
-                                                    <td>{{ $conge->type_conge }}</td>
+                                                    <th scope="row">Type de congé</th>
+                                                    <td><span class="badge bg-secondary">{{ $conge->typeLabel() }}</span></td>
                                                 </tr>
                                                 <tr>
                                                     <th scope="row">Date de debut des congés </th>
@@ -128,8 +128,7 @@
                                                 </tr>
                                                 <tr>
                                                     <th scope="row">Statut de la demande</th>
-                                                    <td>{{ $conge->statut }}</td>
-                                                    
+                                                    <td><span class="badge bg-{{ $conge->statutColor() }}">{{ $conge->statutLabel() }}</span></td>
                                                 </tr>
                                                 <tr>
                                                     <th scope="row">Commentaire</th>
@@ -239,9 +238,12 @@
                                             {{-- Type de congé --}}
                                             <label>Type de congé</label>
                                             <select name="type_conge" class="form-select" required {{ $disabled }}>
-                                                <option value="annuel" {{ old('type_conge', $conge->type_conge) == 'annuel' ? 'selected' : '' }}>Annuel</option>
-                                                <option value="special" {{ old('type_conge', $conge->type_conge) == 'special' ? 'selected' : '' }}>Spécial</option>
-                                                <option value="exceptionnel" {{ old('type_conge', $conge->type_conge) == 'exceptionnel' ? 'selected' : '' }}>Exceptionnel</option>
+                                                <option value="conge_paye" {{ old('type_conge', $conge->type_conge) == 'conge_paye' ? 'selected' : '' }}>Congé payé</option>
+                                                <option value="maladie" {{ old('type_conge', $conge->type_conge) == 'maladie' ? 'selected' : '' }}>Maladie</option>
+                                                <option value="permission_courte" {{ old('type_conge', $conge->type_conge) == 'permission_courte' ? 'selected' : '' }}>Permission courte</option>
+                                                <option value="exceptionnel" {{ old('type_conge', $conge->type_conge) == 'exceptionnel' ? 'selected' : '' }}>Congé exceptionnel</option>
+                                                <option value="special" {{ old('type_conge', $conge->type_conge) == 'special' ? 'selected' : '' }}>Congé spécial</option>
+                                                <option value="autre" {{ old('type_conge', $conge->type_conge) == 'autre' ? 'selected' : '' }}>Autre</option>
                                             </select>
                                             <br>
 
@@ -287,6 +289,29 @@
                                 </div>
 
 
+
+                                <!-- Historique approbation -->
+                                @if($conge->historiques->count() > 0)
+                                <div class="mt-4 border-top pt-3">
+                                    <h5 class="fs-15 text-dark mb-3"><i class="ri-history-line me-1"></i>Historique des approbations</h5>
+                                    <div class="timeline-2">
+                                        @foreach($conge->historiques as $hist)
+                                        <div class="d-flex align-items-start gap-2 mb-3">
+                                            <span class="badge bg-{{ $hist->decision === 'approuve' ? 'success' : ($hist->decision === 'rejete' ? 'danger' : 'warning') }} mt-1">
+                                                {{ $hist->decisionLabel() }}
+                                            </span>
+                                            <div>
+                                                <div class="fw-semibold small">{{ $hist->etapeLabel() }} — {{ $hist->approver->name ?? '—' }}</div>
+                                                <div class="text-muted small">{{ $hist->approved_at ? \Carbon\Carbon::parse($hist->approved_at)->format('d/m/Y H:i') : '' }}</div>
+                                                @if($hist->commentaire)
+                                                    <div class="small fst-italic text-secondary">"{{ $hist->commentaire }}"</div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                                @endif
 
                                 <!-- profile -->
                                 {{-- <div id="projects" class="tab-pane">

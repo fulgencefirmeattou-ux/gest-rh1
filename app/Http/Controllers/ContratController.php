@@ -13,7 +13,7 @@ class ContratController extends Controller
 {
     public function index()
     {
-        $contrats = Contrat::with('employe')->latest()->paginate(8);
+        $contrats = Contrat::with(['employe' => fn($q) => $q->withTrashed()])->latest()->paginate(8);
         return view('superadmin.contrats.index', compact('contrats'));
     }
 

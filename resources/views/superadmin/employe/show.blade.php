@@ -78,6 +78,10 @@
                     <td>{{ $employe->typeContrat->name ?? '—' }}</td>
                 </tr>
                 <tr>
+                    <th>Salaire</th>
+                    <td>{{ $employe->salaire }} Fcfa</td>
+                </tr>
+                <tr>
                     <th>Date d'embauche</th>
                     <td>{{ $employe->date_embauche ? \Carbon\Carbon::parse($employe->date_embauche)->format('d/m/Y') : '—' }}</td>
 

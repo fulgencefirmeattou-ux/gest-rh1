@@ -12,6 +12,10 @@ use App\Models\Employe;
 use App\Models\Service;
 use App\Models\Departement;
 
+/**
+ * @property int|null $employe_id
+ * @property string   $role
+ */
 class User extends Authenticatable
 {
     use HasFactory, Notifiable, HasRoles, SoftDeletes;

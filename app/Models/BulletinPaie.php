@@ -13,7 +13,7 @@ class BulletinPaie extends Model
         'mois', 'periode_debut', 'periode_fin', 'nbre_parts',
         // Gains
         'salaire_base', 'avantage_nature', 'salaire_brut',
-        'brut_imposable', 'indemnite_transport',
+        'brut_imposable', 'indemnite_transport', 'heures_absence', 'retenue_absences',
         'cnps_plafond', 'cmu_base',
         // Charges patronales
         'is_employeur', 'fdfp_ta', 'fdfp_fpc',
@@ -69,6 +69,7 @@ class BulletinPaie extends Model
         $salaireBase      = (float) ($data['salaire_base']      ?? 0);
         $avantageNature   = (float) ($data['avantage_nature']   ?? 0);
         $indemTransport   = (float) ($data['indemnite_transport'] ?? 0);
+        $heuresAbsence    = (float) ($data['heures_absence']    ?? 0);
         $nbreParts        = (float) ($data['nbre_parts']        ?? 1);
         $cnpsPlafond      = (float) ($data['cnps_plafond']      ?? self::CNPS_PLAFOND_DEF);
         $cmuBase          = (float) ($data['cmu_base']          ?? self::CMU_BASE_DEF);
@@ -97,9 +98,13 @@ class BulletinPaie extends Model
         $retenueCnps      = self::arrondir($salaireBrut * self::CNPS_SALARIE_TAUX);
         $retenueCmu       = self::arrondir($cmuBase     * self::CMU_TAUX);
 
+        // Retenue pour heures d'absence : taux horaire = salaire_base / 26 jours / 8 heures
+        $tauxHoraire      = $salaireBase > 0 ? $salaireBase / 26 / 8 : 0;
+        $retenueAbsences  = self::arrondir($tauxHoraire * $heuresAbsence);
+
         $totalRetenues    = $retenueIs + $retenueCn + $retenueIgr + $retenueCnps + $retenueCmu;
         $salaireNet       = $salaireBrut - $totalRetenues;
-        $netAPayer        = $salaireNet + $indemTransport;
+        $netAPayer        = $salaireNet + $indemTransport - $retenueAbsences;
 
         $gains   = $salaireBrut + $indemTransport;
         $retenues = $totalRetenues;
@@ -123,6 +128,7 @@ class BulletinPaie extends Model
             'retenue_igr'                => $retenueIgr,
             'retenue_cnps'               => $retenueCnps,
             'retenue_cmu'                => $retenueCmu,
+            'retenue_absences'           => $retenueAbsences,
             'total_retenues'             => $totalRetenues,
             'salaire_net'                => $salaireNet,
             'net_a_payer'                => $netAPayer,

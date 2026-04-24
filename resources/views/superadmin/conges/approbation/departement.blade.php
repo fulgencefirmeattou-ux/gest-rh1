@@ -1,9 +1,9 @@
-@extends('layouts.base')
+@extends('layouts.app')
 @section('title','liste des congés')
 @section('content')
-    <div class="container mt-5">
+    <div class="container mt-3">
         <div class="d-flex justify-content-between align-items-center">
-            <h2 class="mb-4 text-start">Demandes à valider — Dg/Rh</h2>
+            <h2 class="mb-4 text-start">Demandes à valider — Responsable de departement</h2>
             {{-- <a href="{{ route('conges.create-conge') }}" class="btn btn-primary mb-3 ">Nouvelle demande</a> --}}
         </div>
 
@@ -35,11 +35,11 @@
                                 @foreach ($conges as $index => $conge)
                                     <tr>
                                         <td>{{ $conge->employe->nom }} {{ $conge->employe->prenom }}</td>
-                                        <td>{{ $conge->type_conge }}</td>
+                                        <td><span class="badge bg-secondary">{{ $conge->typeLabel() }}</span></td>
                                         <td>{{ $conge->date_debut_conge->format('d/m/Y')  }}</td>
                                         <td>{{ $conge->date_fin_conge->format('d/m/Y')  }}</td>
                                         <td>{{ $conge->jours_ouvres }} jours</td>
-                                        <td> {{ $conge->statut }}</td>
+                                        <td><span class="badge bg-{{ $conge->statutColor() }}">{{ $conge->statutLabel() }}</span></td>
                                         {{-- <td>
                                            
                                             <form method="POST" action="/service/conge/{{ $conge->id }}/approve">
@@ -98,7 +98,7 @@
                                             <div class="modal fade" id="approveModal-{{ $conge->id }}">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
-                                                        <form method="POST" action="{{ route('dg.conge.traiter', $conge->id) }}">
+                                                        <form method="POST" action="{{ route('departement.conge.traiter', $conge->id) }}">
                                                             @csrf
                                                             <input type="hidden" name="action" value="approve">
 
@@ -151,7 +151,7 @@
                                             <div class="modal fade" id="rejectModal-{{ $conge->id }}">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
-                                                        <form method="POST" action="{{ route('dg.conge.traiter', $conge->id) }}">
+                                                        <form method="POST" action="{{ route('departement.conge.traiter', $conge->id) }}">
                                                             @csrf
                                                             <input type="hidden" name="action" value="reject">
 

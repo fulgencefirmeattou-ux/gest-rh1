@@ -7,21 +7,41 @@ use Illuminate\Database\Eloquent\Model;
 class HistoriqueConge extends Model
 {
     protected $fillable = [
-        'demande_conge_id',
-        'approver_id',
-        'etape',
-        'decision',
-        'commentaire',
-        'approved_at'
+        'demande_conge_id', 'approver_id',
+        'etape', 'decision', 'commentaire', 'approved_at',
     ];
 
-    public function leave()
+    protected $casts = [
+        'approved_at' => 'datetime',
+    ];
+
+    public function demandeConge()
     {
-        return $this->belongsTo(HistoriqueConge::class, 'historique_conge_id');
+        return $this->belongsTo(DemandeConge::class);
     }
 
-    public function responsable()
+    public function approver()
     {
-        return $this->belongsTo(Employe::class, 'responsable_id');
+        return $this->belongsTo(User::class, 'approver_id');
+    }
+
+    public function etapeLabel(): string
+    {
+        return match($this->etape) {
+            'service'     => 'Responsable de service',
+            'departement' => 'Responsable de département',
+            'dg_rh'       => 'DG / RH',
+            default       => $this->etape,
+        };
+    }
+
+    public function decisionLabel(): string
+    {
+        return match($this->decision) {
+            'approuve'             => 'Approuvé',
+            'rejete'               => 'Rejeté',
+            'modification_demandee'=> 'Modification demandée',
+            default                => $this->decision,
+        };
     }
 }

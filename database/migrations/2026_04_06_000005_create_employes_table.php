@@ -40,6 +40,13 @@ return new class extends Migration
             $table->date('date_embauche');
             $table->softDeletes();
             $table->timestamps();
+
+            //--Services liés à la paie (ex: CNPS, CMU)────────────────────────────────────────
+            $table->unsignedBigInteger('service_id')->nullable();
+            $table->unsignedSmallInteger('solde_conges')->default(30);
+            $table->unsignedSmallInteger('solde_permissions')->default(10);
+            $table->unsignedSmallInteger('conges_pris')->default(0);
+            $table->unsignedSmallInteger('permissions_prises')->default(0);
         });
     }
 

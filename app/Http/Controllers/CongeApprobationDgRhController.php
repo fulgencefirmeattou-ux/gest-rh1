@@ -2,93 +2,94 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\DemandeConge;
-use App\Models\Employe;
 use App\Models\HistoriqueConge;
-
+use App\Notifications\CongeNotification;
+use Illuminate\Http\Request;
 
 class CongeApprobationDgRhController extends Controller
 {
+    private function autoriser(): void
+    {
+        if (!in_array(auth()->user()->role, ['dg', 'rh', 'admin'])) {
+            abort(403, "Acces non autorise.");
+        }
+    }
+
     public function dgRhIndex()
     {
-        $conges = DemandeConge::whereIn('statut', ['attente_dg', 'attente_rh'])->get();
+        $this->autoriser();
 
-        return view('conges.approbation.dgRh', compact('conges'));
+        $conges = DemandeConge::with('employe')
+            ->where('statut', 'attente_dg')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('superadmin.conges.approbation.dgRh', compact('conges'));
     }
 
-    public function approve($id)
+    public function approve(Request $request, $id)
     {
-        $conge = DemandeConge::findOrFail($id);
+        $this->autoriser();
 
-        $user = auth()->user();
-        // $employe = $user->employe;
-        $role = $user->role;
+        $conge = DemandeConge::with('employe')->findOrFail($id);
 
-        // if (!$employe) {
-        //     return back()->with('error', 'Aucun employé trouvé.');
-        // }
+        $conge->update(['statut' => 'approuvee', 'commentaire' => null]);
 
-       if (!in_array($user->role, ['dg', 'rh'])) {
-            abort(403, "Vous n'êtes pas autorisé à traiter cette demande.");
+        $employe = $conge->employe;
+        if ($employe) {
+            if ($conge->estPermission()) {
+                $employe->increment('permissions_prises');
+            } else {
+                $employe->increment('conges_pris', max(1, $conge->jours_ouvres));
+            }
         }
 
-        if ($conge->statut === 'attente_dg') {
-            HistoriqueConge::create([
-                'demande_conge_id' => $conge->id,
-                'approver_id' => $employe->id,
-                'etape' => 'dg',
-            ]);
+        HistoriqueConge::create([
+            'demande_conge_id' => $conge->id,
+            'approver_id'      => auth()->id(),
+            'etape'            => 'dg_rh',
+            'decision'         => 'approuve',
+            'commentaire'      => null,
+            'approved_at'      => now(),
+        ]);
 
-            $conge->statut = 'attente_dg';
-            $conge->save();
+        $conge->employe?->user?->notify(new CongeNotification($conge, 'approuvee'));
 
-            return back()->with('success', 'Demande de congé approuvée avec succès.');
-        } elseif ($conge->statut === 'attente_rh') {
-            HistoriqueConge::create([
-                'demande_conge_id' => $conge->id,
-                'approver_id' => $employe->id,
-                'etape' => 'rh',
-            ]);
-
-            $conge->statut = 'approuve';
-            $conge->save();
-
-            return back()->with('success', 'Demande de congé approuvée par le  avec succès.');
-        } else {
-            return back()->with('error', 'Statut de demande de congé invalide pour l\'approbation.');
-        }
+        return back()->with('success', 'Conge approuve.');
     }
 
-    public function reject($id)
+    public function reject(Request $request, $id)
     {
-        $conge = DemandeConge::findOrFail($id);
+        $this->autoriser();
+        $request->validate(['commentaire' => 'nullable|string|max:500']);
 
-        $user = auth()->user();
-        $role = $user->role;
+        $conge = DemandeConge::with('employe')->findOrFail($id);
+        $conge->update(['statut' => 'rejetee', 'commentaire' => $request->commentaire]);
 
-       
+        HistoriqueConge::create([
+            'demande_conge_id' => $conge->id,
+            'approver_id'      => auth()->id(),
+            'etape'            => 'dg_rh',
+            'decision'         => 'rejete',
+            'commentaire'      => $request->commentaire,
+            'approved_at'      => now(),
+        ]);
 
-        if (!in_array($user->role, ['dg', 'rh'])) {
-            abort(403, "Vous n'êtes pas autorisé à traiter cette demande.");
-        }
+        $conge->employe?->user?->notify(new CongeNotification($conge, 'rejetee'));
 
-        $conge->statut = 'rejetee';
-        $conge->save();
-
-        return back()->with('success', 'Demande de congé rejetée avec succès.');
+        return back()->with('success', 'Conge rejete.');
     }
 
-    public function ListeDemandeCongeTraiter(){
-        $user = auth()->user();
-        $role = $user->role;
+    public function ListeDemandeCongeTraiter()
+    {
+        $this->autoriser();
 
-       if (!in_array($user->role, ['dg', 'rh'])) {
-            abort(403, "Vous n'êtes pas autorisé à accéder à cette section.");
-        }
+        $conges = DemandeConge::with('employe')
+            ->whereIn('statut', ['approuvee', 'rejetee'])
+            ->orderBy('updated_at', 'desc')
+            ->get();
 
-        $conges = DemandeConge::whereIn('statut', ['approuvee','rejetee'])->get();
-        return view('conges.traiter.liste-dg', compact('conges'));
+        return view('superadmin.conges.traiter.liste-dg', compact('conges'));
     }
-
 }

@@ -31,12 +31,12 @@
                 </a>
             </li>
             {{-- ── Mon profil (tous) ── --}}
-            <li class="side-nav-item">
+            {{-- <li class="side-nav-item">
                 <a href="{{ route('employe.profil') }}" class="side-nav-link">
                     <i class="ri-user-line"></i>
                     <span>Mon profil</span>
                 </a>
-            </li>
+            </li> --}}
             {{-- ── Gestion RH (admin + rh) ── --}}
             @if($peutGererRH)
                 <li class="side-nav-title text-uppercase text-center">Gestion RH</li>

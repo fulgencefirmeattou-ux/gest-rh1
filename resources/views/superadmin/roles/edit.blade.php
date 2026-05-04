@@ -4,7 +4,7 @@
 
  <section class="row">
         <div class="col-12 col-lg-12">
-            <div>
+            <div class="container py-3">
                 <h2 class="mb-4 text-start">Modifier le rôle</h2>
 
                 @if(session('success'))

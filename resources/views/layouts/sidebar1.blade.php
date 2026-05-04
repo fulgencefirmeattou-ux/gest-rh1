@@ -1,570 +1,199 @@
-<div class="leftside-menu">
+@php
+    $user       = auth()->user();
+    $role       = $user->sidebarRole();
 
-    <!-- Logo etc... (inchangé) -->
+    $isSuperAdmin = $role === 'super-admin';
+    $isAdmin      = $role === 'admin';
+    $isRH         = $role === 'rh';
+    $isRespDept   = $role === 'responsable_departement';
+    $isRespServ   = $role === 'responsable_service';
+
+    $peutGererRH      = $isSuperAdmin || $isRH;
+    $peutGererFinance = $isSuperAdmin || $isRH || $isAdmin;
+    $peutValiderDgRh  = $isSuperAdmin || $isRH || $isAdmin;
+    $aEmployeId       = $user->employe_id !== null;
+
+    $aMenuCongesAbsences = $aEmployeId || $peutValiderDgRh || $isRespDept || $isRespServ;
+@endphp
+
+<div class="leftside-menu">
 
     <div class="h-100" id="leftside-menu-container" data-simplebar>
         <ul class="side-nav">
 
-            <li class="side-nav-title">Main</li>
+            <li class="side-nav-title text-uppercase text-center">Menu</li>
 
-            {{-- Accessible à tous --}}
+            {{-- ── Tableau de bord (tous) ── --}}
             <li class="side-nav-item">
-                {{-- <a href="{{ route('admin.dashboard') }}" class="side-nav-link">
-                <i class="ri-dashboard-3-line"></i>
-                <span>Tableau de bord</span>
-                </a> --}}
-
                 <a href="{{ route('admin.dashboard') }}" class="side-nav-link">
                     <i class="ri-dashboard-3-line"></i>
                     <span>Tableau de bord</span>
                 </a>
             </li>
-
+            {{-- ── Mon profil (tous) ── --}}
             <li class="side-nav-item">
-                <a href="{{ route('employes.index') }}" class="side-nav-link">
-                    <i class="ri-calendar-line"></i>
-                    <span>Employés</span>
-                    {{-- <span class="menu-arrow"></span> --}}
+                <a href="{{ route('employe.profil') }}" class="side-nav-link">
+                    <i class="ri-user-line"></i>
+                    <span>Mon profil</span>
                 </a>
             </li>
+            {{-- ── Gestion RH (admin + rh) ── --}}
+            @if($peutGererRH)
+                <li class="side-nav-title text-uppercase text-center">Gestion RH</li>
 
-            <li class="side-nav-item">
-            <li class="side-nav-item">
-                <a href="{{ route('departements.index') }}" class="side-nav-link">
-                    <i class="ri-calendar-line"></i>
-                    <span>Départements</span>
-                    {{-- <span class="menu-arrow"></span> --}}
-                </a>
-
-            </li>
-
-            <li class="side-nav-item">
-                <a href="{{ route('postes.index') }}" class="side-nav-link">
-                    <i class="ri-calendar-line"></i>
-                    <span>Postes</span>
-                    {{-- <span class="menu-arrow"></span> --}}
-                </a>
-            </li>
-
-            <li class="side-nav-item">
-                <a href="{{ route('type_contrats.index') }}" class="side-nav-link">
-                    <i class="ri-calendar-line"></i>
-                    <span>Types de contrats</span>
-                    {{-- <span class="menu-arrow"></span> --}}
-                </a>
-
-            </li>
-
-            <li class="side-nav-item">
-                <a href="{{ route('utilisateurs.index') }}" class="side-nav-link">
-                    <i class="ri-calendar-line"></i>
-                    <span>Utilisateurs</span>
-                    {{-- <span class="menu-arrow"></span> --}}
-                </a>
-            </li>
-            <li class="side-nav-item">
-                <a href="{{ route('contrats.index') }}" class="side-nav-link">
-                    <i class="ri-calendar-line"></i>
-                    <span>Contrats</span>
-                    {{-- <span class="menu-arrow"></span> --}}
-                </a>
-            </li>
-            <li class="side-nav-item">
-                <a href="{{ route('pointages.index') }}" class="side-nav-link">
-                    <i class="ri-calendar-line"></i>
-                    <span>Pointage</span>
-                    {{-- <span class="menu-arrow"></span> --}}
-                </a>
-            </li>
-
-            <li class="side-nav-item">
-                <a href="{{ route('bulletins.index') }}" class="side-nav-link">
-                    <i class="ri-file-text-line"></i>
-                    <span>Bulletins de paie</span>
-                </a>
-            </li>
-            @php
-                $user        = auth()->user();
-                $peutValiderDgRh        = $user->isDG() || $user->isRH() || $user->isAdmin();
-                $peutTraiterAbsences    = $user->isDG() || $user->isRH() || $user->isAdmin();
-                $aMenuAbsences          = ($user->employe_id !== null) || $peutValiderDgRh || $peutTraiterAbsences;
-            @endphp
-
-            @if($aMenuAbsences)
-            <li class="side-nav-item">
-                <a href="#sidebarAbsences" data-bs-toggle="collapse" class="side-nav-link">
-                    <i class="ri-calendar-check-line"></i>
-                    <span>Absences & Congés</span>
-                    <span class="menu-arrow"></span>
-                </a>
-                <div class="collapse" id="sidebarAbsences">
-                    <ul class="side-nav-second-level">
-
-                        @if($user->employe_id !== null)
-                        <li>
-                            <a href="{{ route('conges.voir') }}">
-                                <i class="ri-plane-line me-1"></i> Mes congés
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('justificatifs.absence.liste') }}">
-                                <i class="ri-error-warning-line me-1"></i> Mes absences
-                            </a>
-                        </li>
-                        @endif
-
-@if($peutValiderDgRh)
-                        <li>
-                            <a href="{{ route('conges.approbation.dgRh') }}">
-                                <i class="ri-checkbox-circle-line me-1"></i> Valider — DG/RH
-                            </a>
-                        </li>
-                        @endif
-
-                        @if($peutTraiterAbsences)
-                        <li>
-                            <a href="{{ route('justisificatifs.absence.rh') }}">
-                                <i class="ri-file-list-3-line me-1"></i> Traiter absences
-                            </a>
-                        </li>
-                        @endif
-
-                    </ul>
-                </div>
-            </li>
+                <li class="side-nav-item">
+                    <a href="{{ route('utilisateurs.index') }}" class="side-nav-link">
+                        <i class="ri-user-settings-line"></i>
+                        <span>Utilisateurs</span>
+                    </a>
+                </li>
+                <li class="side-nav-item">
+                    <a href="{{ route('employes.index') }}" class="side-nav-link">
+                        <i class="ri-group-line"></i>
+                        <span>Employés</span>
+                    </a>
+                </li>
+                <li class="side-nav-item">
+                    <a href="{{ route('departements.index') }}" class="side-nav-link">
+                        <i class="ri-building-2-line"></i>
+                        <span>Départements</span>
+                    </a>
+                </li>
+                <li class="side-nav-item">
+                    <a href="{{ route('postes.index') }}" class="side-nav-link">
+                        <i class="ri-briefcase-line"></i>
+                        <span>Postes</span>
+                    </a>
+                </li>
+                <li class="side-nav-item">
+                    <a href="{{ route('type_contrats.index') }}" class="side-nav-link">
+                        <i class="ri-file-list-2-line"></i>
+                        <span>Types de contrats</span>
+                    </a>
+                </li>
+                
             @endif
 
-            <li class="side-nav-item">
-                <a href="{{ route('roles.index') }}" class="side-nav-link">
-                    <i class="ri-calendar-line"></i>
-                    <span>Rôles</span>
-                    {{-- <span class="menu-arrow"></span> --}}
-                </a>
-            </li>
+            {{-- ── Finance (admin + rh + dg) ── --}}
+            @if($peutGererFinance)
+                <li class="side-nav-title text-uppercase text-center">Finance & Paie</li>
 
-            <li class="side-nav-item">
-                <a href="{{ route('permissions.index') }}" class="side-nav-link">
-                    <i class="ri-calendar-line"></i>
-                    <span>Permissions</span>
-                    {{-- <span class="menu-arrow"></span> --}}
-                </a>
-            </li>
-            <li class="side-nav-item">
-                <a href="{{ route('info-entreprise.index') }}" class="side-nav-link">
-                    <i class="ri-calendar-line"></i>
-                    <span>Info entreprise</span>
-                    {{-- <span class="menu-arrow"></span> --}}
-                </a>
-            </li>
-
-
-
-
-
-
-
-
-
-            {{-- @switch(auth()->user()->sidebarRole())
-                @case('employe')
-                    @include('sidebars.employe')
-                    @break
-
-                @case('responsable_service')
-                    @include('sidebars.responsable-service')
-                    @break
-
-                @case('responsable_departement')
-                    @include('sidebars.responsable-departement')
-                    @break
-
-                @case('rh')
-                    @include('sidebars.rh')
-                    @break
-
-                @case('dg')
-                    @include('sidebars.dg')
-                    @break
-
-                @case('admin')
-                    @include('sidebars.admin')
-                    @break
-            @endswitch --}}
-
-        </ul>
-    </div>
-</div>
-
-
-
-{{-- ======================= --}}
-{{-- MENU EMPLOYÉ      --}}
-{{-- ======================= --}}
-{{-- @if (auth()->user()->isEmploye() && !auth()->user()->isResponsableService() && !auth()->user()->isResponsableDepartement()) --}}
-{{-- && !auth()->user()->isResponsableService() && !auth()->user()->isResponsableDepartement() --}}
-{{-- <li class="side-nav-item">
-                    <a href="{{ route('conges.voir') }}" class="side-nav-link">
-<i class="ri-calendar-line"></i>
-<span>CongésA</span>
-<span class="menu-arrow"></span>
-</a>
-</li>
-<li class="side-nav-item">
-    <a href="{{ route('justificatifs.absence.liste') }}" class="side-nav-link">
-        <i class="ri-calendar-line"></i>
-        <span>Justifiés son absence</span>
-        <span class="menu-arrow"></span>
-    </a>
-</li>
-<li class="side-nav-item">
-    <a href="{{ route('employe.contrat') }}" class="side-nav-link">
-        <i class="ri-file-list-3-line"></i>
-        <span>Mes contrats</span>
-    </a>
-</li>
-<li class="side-nav-item">
-    <a href="{{ route('employe.contrat') }}" class="side-nav-link">
-        <i class="ri-file-list-3-line"></i>
-        <span>Mes documents</span>
-        <span class="menu-arrow"></span>
-    </a>
-
-    <div class="collapse" id="sidebarDoc">
-        <ul class="side-nav-second-level">
-            <li class="side-nav-item">
-                <a href="{{ route('employe.contrat') }}" class="side-nav-link">
-
-                    <span>Mes contrats</span>
-                </a>
-            </li>
-        </ul>
-    </div>
-</li>
-
-{{-- @endif --}}
-
-
-
-{{-- ======================= --}}
-{{-- MENU ADMIN / DG     --}}
-{{-- ======================= --}}
-{{-- @if(auth()->user()->isRole('admin') || auth()->user()->isRole('dg')) 
                 <li class="side-nav-item">
-                    <a data-bs-toggle="collapse" href="#adminUsers" class="side-nav-link">
-                        <i class="ri-group-2-line"></i>
-                        <span> Utilisateurs </span>
+                    <a href="{{ route('contrats.index') }}" class="side-nav-link">
+                        <i class="ri-file-text-line"></i>
+                        <span>Contrats</span>
+                    </a>
+                </li>
+                <li class="side-nav-item">
+                    <a href="{{ route('bulletins.index') }}" class="side-nav-link">
+                        <i class="ri-money-dollar-circle-line"></i>
+                        <span>Bulletins de paie</span>
+                    </a>
+                </li>
+                <li class="side-nav-item">
+                    <a href="{{ route('pointages.index') }}" class="side-nav-link">
+                        <i class="ri-time-line"></i>
+                        <span>Pointage</span>
+                    </a>
+                </li>
+                
+            @endif
+
+            {{-- ── Absences & Congés ── --}}
+            @if($aMenuCongesAbsences)
+                <li class="side-nav-title text-uppercase text-center">Absences & Congés</li>
+
+                <li class="side-nav-item">
+                    <a href="#sidebarAbsences" data-bs-toggle="collapse" class="side-nav-link">
+                        <i class="ri-calendar-check-line"></i>
+                        <span>Absences & Congés</span>
                         <span class="menu-arrow"></span>
                     </a>
-
-                    <div class="collapse" id="adminUsers">
+                    <div class="collapse" id="sidebarAbsences">
                         <ul class="side-nav-second-level">
-                            <li><a href="{{route('admin.users.create')}}">Créer un utilisateur</a></li>
-<li><a href="{{ route('users.liste') }}">Liste des utilisateurs</a></li>
-<li><a href="{{ route('create.departement') }}">Créer un Département</a></li>
-<li><a href="{{ route('departements.liste') }}">Liste des Départements</a></li>
-<li><a href="{{ route('create.service') }}">Créer un service</a></li>
-<li><a href="{{ route('services.liste') }}">Liste des services</a></li>
-<li><a href="{{ route('create.employe') }}">Créer un employé</a></li>
-<li><a href="{{ route('employe.liste') }}">Liste des employés</a></li>
-</ul>
-</div>
-</li>
-{{-- @endif --}}
 
+                            {{-- Employé : ses propres congés/absences --}}
+                            @if($aEmployeId)
+                                <li>
+                                    <a href="{{ route('conges.voir') }}">
+                                        <i class="ri-plane-line me-1"></i> Mes congés
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('justificatifs.absence.liste') }}">
+                                        <i class="ri-error-warning-line me-1"></i> Mes absences
+                                    </a>
+                                </li>
+                            @endif
 
-{{-- ======================= --}}
-{{-- MENU RESSOURCES HUMAINES (RH) || auth()->user()->isRole('admin')--}}
+                            {{-- Responsable service : valider les congés du service --}}
+                            @if($isRespServ)
+                                <li>
+                                    <a href="{{ route('conges.approbation.service') }}">
+                                        <i class="ri-check-double-line me-1"></i> Valider — Service
+                                    </a>
+                                </li>
+                            @endif
 
-{{-- ======================= --}}
-{{-- @if(auth()->user()->isRole('rh') ) 
-                <li class="side-nav-item">
-                    <a href="{{ route('employe.contrat') }}" class="side-nav-link">
-<i class="ri-file-list-3-line"></i>
-<span>Mes documents</span>
-{{-- <span class="menu-arrow"></span> 
-                    </a>
+                            {{-- Responsable département : valider les congés du département --}}
+                            @if($isRespDept)
+                                <li>
+                                    <a href="{{ route('conges.approbation.departement') }}">
+                                        <i class="ri-checkbox-multiple-line me-1"></i> Valider — Département
+                                    </a>
+                                </li>
+                            @endif
 
-                    {{-- <div class="collapse" id="sidebarDoc">
-                        <ul class="side-nav-second-level">
-                            <li class="side-nav-item">
-                                <a href="{{ route('employe.contrat') }}" class="side-nav-link">
+                            {{-- DG / RH / Admin : validation finale et gestion absences --}}
+                            @if($peutValiderDgRh)
+                                <li>
+                                    <a href="{{ route('conges.approbation.dgRh') }}">
+                                        <i class="ri-checkbox-circle-line me-1"></i> Valider — DG/RH
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('justisificatifs.absence.rh') }}">
+                                        <i class="ri-file-list-3-line me-1"></i> Traiter absences
+                                    </a>
+                                </li>
+                            @endif
 
-<span>Mes contrats</span>
-</a>
-</li>
-</ul>
-</div>
-</li>
-<li class="side-nav-item">
-    <a data-bs-toggle="collapse" href="#sidebarEmploye" class="side-nav-link">
-        <i class="ri-folder-user-line"></i>
-        <span>Employés</span>
-        <span class="menu-arrow"></span>
-    </a>
-
-    <div class="collapse" id="sidebarEmploye">
-        <ul class="side-nav-second-level">
-            <li><a href="{{ route('create.employe') }}">Créer un employé</a></li>
-            <li><a href="{{ route('employe.liste') }}">Liste des employés</a></li>
-            <li><a href="{{ route('contrats.create') }}">Créer un contrat</a></li>
-            <li><a href="{{ route('contrats.index') }}">Liste des contrats</a></li>
-        </ul>
-    </div>
-</li>
-<li class="side-nav-item">
-    <a data-bs-toggle="collapse" href="#sidebarService" class="side-nav-link">
-        <i class="ri-calendar-line"></i>
-        <span>Services</span>
-        <span class="menu-arrow"></span>
-    </a>
-
-    <div class="collapse" id="sidebarService">
-        <ul class="side-nav-second-level">
-            <li><a href="{{ route('create.service') }}">Créer un service</a></li>
-            <li><a href="{{ route('services.liste') }}">Liste des services</a></li>
-        </ul>
-    </div>
-</li>
-<li class="side-nav-item">
-    <a data-bs-toggle="collapse" href="#sidebarDepartement" class="side-nav-link">
-        <i class="ri-calendar-line"></i>
-        <span>Départements</span>
-        <span class="menu-arrow"></span>
-    </a>
-
-    <div class="collapse" id="sidebarDepartement">
-        <ul class="side-nav-second-level">
-            <li><a href="{{ route('create.departement') }}">Créer un Département</a></li>
-            <li><a href="{{ route('departements.liste') }}">Liste des Départements</a></li>
-        </ul>
-    </div>
-</li>
-<li class="side-nav-item">
-    <a data-bs-toggle="collapse" href="#sidebarPaie" class="side-nav-link">
-        <i class="ri-folder-user-line"></i>
-        <span>Paie</span>
-        <span class="menu-arrow"></span>
-    </a>
-
-    <div class="collapse" id="sidebarPaie">
-        <ul class="side-nav-second-level">
-            <li><a href="{{ route('bulletins.create') }}">Faire une paie</a></li>
-            <li><a href="{{ route('bulletins.index') }}">Liste des bulletins</a></li>
-        </ul>
-    </div>
-</li>
-<li class="side-nav-item">
-    <a data-bs-toggle="collapse" href="#sidebarConge" class="side-nav-link">
-        <i class="ri-calendar-line"></i>
-        <span>Congés</span>
-        <span class="menu-arrow"></span>
-    </a>
-
-    <div class="collapse" id="sidebarConge">
-        <ul class="side-nav-second-level">
-            <li><a href="{{ route('conges.voir') }}">Liste des congés</a></li>
-            <li class="side-nav-item">
-                <a href="{{ route('conges.approbation.dgRh') }}" class="side-nav-link">
-                    {{-- <i class="ri-file-shield-line"></i> 
-                                    <span>Validation finale Congés</span>
-                                </a>
-                            </li>
-                            <li class="side-nav-item">
-                                <a href="{{ route('conges.traiter.liste-dg') }}" class="side-nav-link">
-                    <i class="ri-task-line"></i>
-                    <span>Congés traités</span>
-                </a>
-            </li>
-            <li><a href="{{ route('justisificatifs.absence.rh') }}">valider une absence</a></li>
-            <li><a href="{{ route('justificatifs.absence.traiter') }}">Absences traité</a></li>
-        </ul>
-    </div>
-</li>
-{{-- @endif --}}
-
-
-{{-- ================================================= --}}
-{{-- RESPONSABLE DE SERVICE => Valide congés du service --}}
-{{-- ================================================= --}}
-{{-- @if(auth()->user()->isResponsableService()) --}}
-{{-- dd('(auth()->user()->isResponsableService())'); 
-                <li class="side-nav-item">
-                    <a data-bs-toggle="collapse" href="#serviceConge" class="side-nav-link">
-                        <i class="ri-calendar-line"></i>
-                        <span>Congés</span> 
-                        <span class="menu-arrow"></span>
-                    </a>
-
-                    <div class="collapse" id="serviceConge">
-                        <ul class="side-nav-second-level">
-                            {{-- <li><a href="{{ route('create.service') }}">Créer un service</a></li>
-<li><a href="{{ route('services.liste') }}">Liste des services</a></li>
-<li><a href="{{ route('create.employe') }}">Créer un employé</a></li>
-<li><a href="{{ route('employe.liste') }}">Liste des employés</a></li>
-<li><a href="{{ route('conges.voir') }}">Demander un congés</a></li>
-<li class="side-nav-item">
-    <a href="{{ route('conges.approbation.service') }}" class="side-nav-link">
-        {{-- <i class="ri-file-check-line"></i>
-                                    <span>Validation Congés (Service)</span>
-                                </a>
-                            </li>
-                            <li class="side-nav-item">
-                                <a href="{{ route('conges.traiter.liste-service') }}" class="side-nav-link">
-        {{-- <i class="ri-file-check-line"></i> 
-                                    <span>Demande traitée</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="side-nav-item">
-                    <a href="{{ route('conges.approbation.service') }}" class="side-nav-link">
-        {{-- <i class="ri-file-check-line"></i>
-                        <span>Validation Congés (Service)</span>
-                    </a>
-                </li>
-                <li class="side-nav-item">
-                    <a href="{{ route('justificatifs.absence.liste') }}" class="side-nav-link">
-        <i class="ri-calendar-line"></i>
-        <span>Justifiés son absence</span>
-        {{-- <span class="menu-arrow"></span>
-                    </a>
-                </li>
-                {{-- <li class="side-nav-item">
-                    <a href="{{ route('employe.contrat') }}" class="side-nav-link">
-        <i class="ri-file-list-3-line"></i>
-        <span>Mes contrats</span>
-    </a>
-</li>
-<li class="side-nav-item">
-    <a href="{{ route('employe.contrat') }}" class="side-nav-link">
-        <i class="ri-file-list-3-line"></i>
-        <span>Mes documents</span>
-        {{-- <span class="menu-arrow"></span> 
-                    </a>
-
-                    {{-- <div class="collapse" id="sidebarDoc">
-                        <ul class="side-nav-second-level">
-                            <li class="side-nav-item">
-                                <a href="{{ route('employe.contrat') }}" class="side-nav-link">
-
-        <span>Mes contrats</span>
-    </a>
-</li>
-</ul>
-</div>
-</li>
-{{-- @endif --}}
-
-
-{{-- ====================================================== --}}
-{{-- RESPONSABLE DE DÉPARTEMENT => Valide congés département --}}
-{{-- ====================================================== --}}
-{{-- @if(auth()->user()->isResponsableDepartement()) --}}
-{{-- <li class="side-nav-item">
-                    <a href="{{ route('conges.approbation.departement') }}" class="side-nav-link">
-<i class="ri-file-check-fill"></i>
-<span>Validation Congés (Département)</span>
-</a>
-</li>
-<li class="side-nav-item">
-    <a data-bs-toggle="collapse" href="#serviceConge" class="side-nav-link">
-        <i class="ri-calendar-line"></i>
-        <span>Congés</span>
-        <span class="menu-arrow"></span>
-    </a>
-
-    <div class="collapse" id="serviceConge">
-        <ul class="side-nav-second-level">
-            {{-- <li><a href="{{ route('create.service') }}">Créer un service</a>
-</li>
-<li><a href="{{ route('services.liste') }}">Liste des services</a></li>
-<li><a href="{{ route('create.employe') }}">Créer un employé</a></li>
-<li><a href="{{ route('employe.liste') }}">Liste des employés</a></li>
-<li><a href="{{ route('conges.voir') }}">Demander un congés</a></li>
-<li class="side-nav-item">
-    <a href="{{ route('conges.approbation.departement') }}" class="side-nav-link">
-        {{-- <i class="ri-file-check-line"></i> 
-                                   <span>Validation Congés</span>
-                                </a>
-                            </li>
-                            <li class="side-nav-item">
-                                <a href="{{ route('conges.traiter.liste') }}" class="side-nav-link">
-        {{-- <i class="ri-file-check-line"></i>
-                                    <span>Demande traitée</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="side-nav-item">
-                    <a href="{{ route('justificatifs.absence.liste') }}" class="side-nav-link">
-        <i class="ri-calendar-line"></i>
-        <span>Justifiés son absence</span>
-        {{-- <span class="menu-arrow"></span> 
-                    </a>
-                </li>
-                {{-- <li class="side-nav-item">
-                    <a href="{{ route('employe.contrat') }}" class="side-nav-link">
-        <i class="ri-file-list-3-line"></i>
-        <span>Mes contrats</span>
-    </a>
-</li>
-<li class="side-nav-item">
-    <a href="{{ route('employe.contrat') }}" class="side-nav-link">
-        <i class="ri-file-list-3-line"></i>
-        <span>Mes documents</span>
-        {{-- <span class="menu-arrow"></span>
-                    </a>
-
-                    {{-- <div class="collapse" id="sidebarDoc">
-                        <ul class="side-nav-second-level">
-                            <li class="side-nav-item">
-                                <a href="{{ route('employe.contrat') }}" class="side-nav-link">
-
-        <span>Mes contrats</span>
-    </a>
-</li>
-</ul>
-</div>
-</li>
-{{-- @endif --}}
-
-
-{{-- ======================= --}}
-{{-- DG ou RH -> dernière validation --}}
-{{-- ======================= --}}
-{{-- @if(auth()->user()->isRole('dg') ) --}}
-
-{{-- || auth()->user()->isRole('rh') 
-                    
-                <li class="side-nav-item">
-                    <a data-bs-toggle="collapse" href="#sidebarDg" class="side-nav-link">
-                        <i class="ri-calendar-line"></i>
-                        <span>Congés</span> 
-                        <span class="menu-arrow"></span>
-                    </a>
-
-                    <div class="collapse" id="sidebarDg">
-                        <ul class="side-nav-second-level">
-                            {{-- <li><a href="{{ route('create.service') }}">Créer un service</a></li>
-<li><a href="{{ route('services.liste') }}">Liste des services</a></li>
-<li><a href="{{ route('create.employe') }}">Créer un employé</a></li>
-<li><a href="{{ route('employe.liste') }}">Liste des employés</a></li>
-<li class="side-nav-item">
-    <a href="{{ route('conges.approbation.dgRh') }}" class="side-nav-link">
-        {{-- <i class="ri-file-shield-line"></i>
-                                    <span>Validation finale Congés</span>
-                                </a>
-                            </li>
-                            <li class="side-nav-item">
-                                <a href="{{ route('conges.traiter.liste-dg') }}" class="side-nav-link">
-        {{-- <i class="ri-task-line"></i>
-                                    <span>Congés traités</span>
-                                </a>
-                            </li>
                         </ul>
                     </div>
                 </li>
                 
-            {{-- @endif --}}
+            @endif
+
+            {{-- ── Administration système (super-admin uniquement) ── --}}
+            @if($isSuperAdmin)
+                <li class="side-nav-title text-uppercase text-center">Administration</li>
+
+                <li class="side-nav-item">
+                    <a href="{{ route('utilisateurs.index') }}" class="side-nav-link">
+                        <i class="ri-user-settings-line"></i>
+                        <span>Utilisateurs</span>
+                    </a>
+                </li>
+                <li class="side-nav-item">
+                    <a href="{{ route('roles.index') }}" class="side-nav-link">
+                        <i class="ri-shield-user-line"></i>
+                        <span>Rôles</span>
+                    </a>
+                </li>
+                <li class="side-nav-item">
+                    <a href="{{ route('permissions.index') }}" class="side-nav-link">
+                        <i class="ri-lock-line"></i>
+                        <span>Permissions</span>
+                    </a>
+                </li>
+                <li class="side-nav-item">
+                    <a href="{{ route('info-entreprise.index') }}" class="side-nav-link">
+                        <i class="ri-building-line"></i>
+                        <span>Info entreprise</span>
+                    </a>
+                </li>
+            @endif
+
+        </ul>
+    </div>
+</div>

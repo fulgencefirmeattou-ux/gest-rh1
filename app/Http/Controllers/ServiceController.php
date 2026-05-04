@@ -146,7 +146,7 @@ class ServiceController extends Controller
         $employesId = Employe::where('service_id', $service->id)
             ->whereNotIn('id', $idsAExclure)
             ->whereHas('user', function ($q) {
-                $q->whereNotIn('role', ['dg', 'rh']); 
+                $q->whereNotIn('role', ['admin', 'rh']);
             })
             ->pluck('id');
 

@@ -55,20 +55,49 @@
                                 </td>
                                 <td class="text-center">
                                     <div class="d-flex gap-1 justify-content-center">
-                                        {{-- Valider --}}
-                                        <form method="POST" action="{{ route('absence.approve', $absence->id) }}">
-                                            @csrf
-                                            <input type="hidden" name="commentaire_rh" value="">
-                                            <button class="btn btn-success btn-sm" title="Valider">
-                                                <i class="ri-check-line"></i>
-                                            </button>
-                                        </form>
+                                        {{-- Valider → modal avec commentaire optionnel --}}
+                                        <button class="btn btn-success btn-sm" title="Valider"
+                                                data-bs-toggle="modal" data-bs-target="#approveModal{{ $absence->id }}">
+                                            <i class="ri-check-line"></i>
+                                        </button>
 
-                                        {{-- Rejeter avec commentaire --}}
+                                        {{-- Rejeter → modal avec commentaire optionnel --}}
                                         <button class="btn btn-danger btn-sm" title="Rejeter"
                                                 data-bs-toggle="modal" data-bs-target="#rejectModal{{ $absence->id }}">
                                             <i class="ri-close-line"></i>
                                         </button>
+                                    </div>
+
+                                    {{-- Modal validation --}}
+                                    <div class="modal fade" id="approveModal{{ $absence->id }}" tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <form method="POST" action="{{ route('absence.approve', $absence->id) }}">
+                                                    @csrf
+                                                    <div class="modal-header">
+                                                        <h6 class="modal-title text-success">
+                                                            <i class="ri-check-circle-line me-1"></i>Valider l'absence — {{ $absence->employe->nom }} {{ $absence->employe->prenom }}
+                                                        </h6>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p class="text-muted small mb-3">
+                                                            <i class="ri-information-line me-1"></i>
+                                                            Le commentaire est optionnel. S'il est renseigné, il sera inclus dans la notification envoyée à l'employé.
+                                                        </p>
+                                                        <label class="form-label fw-semibold">Commentaire <span class="text-muted fw-normal">(optionnel)</span></label>
+                                                        <textarea name="commentaire_rh" class="form-control" rows="3"
+                                                                  placeholder="Ex : Absence prise en compte, merci de fournir le certificat médical à votre retour..."></textarea>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                                                        <button type="submit" class="btn btn-success btn-sm">
+                                                            <i class="ri-check-line me-1"></i>Valider
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     {{-- Modal rejet --}}
@@ -78,16 +107,24 @@
                                                 <form method="POST" action="{{ route('absence.reject', $absence->id) }}">
                                                     @csrf
                                                     <div class="modal-header">
-                                                        <h6 class="modal-title">Rejeter l'absence — {{ $absence->employe->nom }}</h6>
+                                                        <h6 class="modal-title text-danger">
+                                                            <i class="ri-close-circle-line me-1"></i>Rejeter l'absence — {{ $absence->employe->nom }} {{ $absence->employe->prenom }}
+                                                        </h6>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                                     </div>
                                                     <div class="modal-body">
-                                                        <label class="form-label">Commentaire (optionnel)</label>
-                                                        <textarea name="commentaire_rh" class="form-control" rows="3" placeholder="Motif du rejet..."></textarea>
+                                                        <p class="text-muted small mb-3">
+                                                            <i class="ri-information-line me-1"></i>
+                                                            Le commentaire est optionnel. S'il est renseigné, il sera inclus dans la notification envoyée à l'employé.
+                                                        </p>
+                                                        <label class="form-label fw-semibold">Commentaire <span class="text-muted fw-normal">(optionnel)</span></label>
+                                                        <textarea name="commentaire_rh" class="form-control" rows="3" placeholder="Ex : Motif du rejet, absence non justifiée..."></textarea>
                                                     </div>
                                                     <div class="modal-footer">
-                                                        <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
-                                                        <button class="btn btn-danger btn-sm">Rejeter</button>
+                                                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                                                        <button type="submit" class="btn btn-danger btn-sm">
+                                                            <i class="ri-close-line me-1"></i>Rejeter
+                                                        </button>
                                                     </div>
                                                 </form>
                                             </div>

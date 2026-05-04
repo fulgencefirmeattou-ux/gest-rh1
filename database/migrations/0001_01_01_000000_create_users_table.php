@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->enum('role', ['employe', 'admin', 'rh', 'dg', 'responsable_service'])->default('employe');
+            $table->enum('role', ['employe', 'super-admin', 'admin', 'rh', 'responsable_service'])->default('employe');
             $table->string('login')->nullable();
             $table->unsignedBigInteger('employe_id')->nullable();
             $table->timestamp('date_creation')->nullable()->useCurrent();

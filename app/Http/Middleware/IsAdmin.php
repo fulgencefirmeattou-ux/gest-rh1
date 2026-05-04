@@ -21,7 +21,7 @@ class IsAdmin
             return redirect()->route('login');
         }
 
-        if (!in_array($user->role, ['admin', 'rh', 'dg'])) {
+        if (!in_array($user->role, ['super-admin', 'rh', 'admin'])) {
             abort(403, 'Accès interdit');
         }
 

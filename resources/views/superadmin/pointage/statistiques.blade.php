@@ -163,10 +163,14 @@
                                         @endif
                                     </td>
                                     <td class="text-center">
-                                        <a href="{{ route('pointages.calendrier', ['employe_id' => $s['employe']->id, 'mois' => $mois, 'annee' => $annee]) }}"
-                                           class="btn btn-outline-secondary btn-sm">
-                                            <i class="ri-calendar-line"></i>
-                                        </a>
+                                        @if($s['employe'])
+                                            <a href="{{ route('pointages.calendrier', ['employe_id' => $s['employe']->id, 'mois' => $mois, 'annee' => $annee]) }}"
+                                               class="btn btn-outline-secondary btn-sm">
+                                                <i class="ri-calendar-line"></i>
+                                            </a>
+                                        @else
+                                            <span class="text-muted">—</span>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

@@ -74,14 +74,14 @@ class User extends Authenticatable
     // RÔLES SYSTÈME
     // =======================
 
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === 'super-admin';
+    }
+
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
-    }
-
-    public function isDG(): bool
-    {
-        return $this->role === 'dg';
     }
 
     public function isRH(): bool
@@ -122,10 +122,10 @@ class User extends Authenticatable
 
     public function sidebarRole(): string
     {
+        if ($this->isSuperAdmin())
+            return 'super-admin';
         if ($this->isAdmin())
             return 'admin';
-        if ($this->isDG())
-            return 'dg';
         if ($this->isRH())
             return 'rh';
         if ($this->isResponsableDepartement())

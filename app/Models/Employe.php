@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\BulletinPaie;
 
 class Employe extends Model
 {
@@ -61,6 +62,11 @@ class Employe extends Model
     public function demandesConge()
     {
         return $this->hasMany(DemandeConge::class);
+    }
+
+    public function bulletins()
+    {
+        return $this->hasMany(BulletinPaie::class);
     }
 
     public function soldeCongesRestant(): int

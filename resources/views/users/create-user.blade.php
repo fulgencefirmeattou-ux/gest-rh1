@@ -74,11 +74,11 @@
                     <label for="role" class="form-label">Rôle</label>
                     <select name="role" id="role" class="form-select" required>
                         <option value="">-- Choisir un rôle --</option>
+                        <option value="super-admin" {{ old('role') == 'super-admin' ? 'selected' : '' }}>Super Administrateur</option>
                         <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Administrateur</option>
                         <option value="employe" {{ old('role') == 'employe' ? 'selected' : '' }}>Employé</option>
                         {{-- <option value="responsable" {{ old('role') == 'responsable' ? 'selected' : '' }}>Responsable</option> --}}
-                        <option value="dg" {{ old('role') == 'DG' ? 'selected' : '' }}>DG</option>
-                        <option value="rh" {{ old('role') == 'RH' ? 'selected' : '' }}>RH</option>
+                        <option value="rh" {{ old('role') == 'rh' ? 'selected' : '' }}>RH</option>
                     </select>
                 </div>
                 {{-- <div class="mb-3">

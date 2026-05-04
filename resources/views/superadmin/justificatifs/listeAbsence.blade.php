@@ -15,15 +15,33 @@
 
     {{-- Solde permissions --}}
     @if($employe)
+    @php
+        $soldeMax          = max(1, $employe->solde_permissions ?? 10);
+        $permisUtilisees   = $absences->where('type_absence', 'permission_courte')->where('statut', 'validee')->count();
+        $permisEnAttente   = $absences->where('type_absence', 'permission_courte')->where('statut', 'en_attente')->count();
+        $permisRestantes   = max(0, $soldeMax - $permisUtilisees);
+        $pctUsed           = round(($permisUtilisees / $soldeMax) * 100);
+    @endphp
     <div class="row g-3 mb-4">
-        <div class="col-md-3">
-            <div class="card border-0 bg-warning-subtle text-center p-3">
-                <div class="fw-bold fs-4">{{ $employe->soldePermissionsRestant() }}</div>
-                <small class="text-muted">Permissions restantes / {{ $employe->solde_permissions }}</small>
-                <div class="progress mt-2" style="height:6px;">
-                    <div class="progress-bar bg-warning" style="width:{{ $employe->solde_permissions > 0 ? ($employe->permissions_prises / $employe->solde_permissions) * 100 : 0 }}%"></div>
+        <div class="col-md-4">
+            <div class="card border-0 bg-warning-subtle p-3">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <span class="fw-semibold text-muted small text-uppercase">Permissions</span>
+                    <i class="ri-time-line text-warning fs-18"></i>
                 </div>
-                <small class="text-muted">{{ $employe->permissions_prises }} utilisée(s)</small>
+                <div class="d-flex align-items-baseline gap-2">
+                    <span class="fw-bold fs-2 text-warning">{{ $permisRestantes }}</span>
+                    <span class="text-muted small">/ {{ $soldeMax }} restantes</span>
+                </div>
+                <div class="progress my-2" style="height:6px;">
+                    <div class="progress-bar bg-warning" style="width:{{ $pctUsed }}%;"></div>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <small class="text-muted">{{ $permisUtilisees }} validée(s)</small>
+                    @if($permisEnAttente > 0)
+                        <small class="text-warning"><i class="ri-time-line me-1"></i>{{ $permisEnAttente }} en attente</small>
+                    @endif
+                </div>
             </div>
         </div>
     </div>

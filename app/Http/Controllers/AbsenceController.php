@@ -12,14 +12,14 @@ class AbsenceController extends Controller
 {
     private function autoriserRhDg(): void
     {
-        if (!in_array(auth()->user()->role, ['dg', 'rh', 'admin'])) {
+        if (!in_array(auth()->user()->role, ['admin', 'rh', 'super-admin'])) {
             abort(403, "Accès non autorisé.");
         }
     }
 
-    private function notifierRhDg(Absence $absence, string $type): void
+    private function notifierRh(Absence $absence, string $type): void
     {
-        User::whereIn('role', ['rh', 'dg', 'admin'])->get()
+        User::where('role', 'rh')->get()
             ->each(fn($user) => $user->notify(new AbsenceNotification($absence, $type)));
     }
 
@@ -29,7 +29,15 @@ class AbsenceController extends Controller
         if (!$employe) {
             return back()->withErrors(['employe' => "Vous n'êtes pas enregistré comme employé."]);
         }
+
         $absences = Absence::where('employe_id', $employe->id)->orderBy('date_absence', 'desc')->get();
+
+        // Resynchronise permissions_prises avec le nombre réel de permissions validées
+        $permisValidees = $absences->where('type_absence', 'permission_courte')->where('statut', 'validee')->count();
+        if ($employe->permissions_prises !== $permisValidees) {
+            $employe->update(['permissions_prises' => $permisValidees]);
+        }
+
         return view('superadmin.justificatifs.listeAbsence', compact('absences', 'employe'));
     }
 
@@ -77,7 +85,7 @@ class AbsenceController extends Controller
             'statut'           => 'en_attente',
         ]);
 
-        $this->notifierRhDg($absence, 'nouvelle');
+        $this->notifierRh($absence, 'nouvelle');
 
         return redirect()->route('justificatifs.absence.liste')
             ->with('success', 'Absence déclarée. Les RH ont été notifiés.');

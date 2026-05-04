@@ -74,8 +74,8 @@ class PermissionSeeder extends Seeder
         // RÔLES
         // -------------------------
 
+        $superAdmin      = Role::firstOrCreate(['name' => 'super-admin']);
         $admin           = Role::firstOrCreate(['name' => 'admin']);
-        $dg              = Role::firstOrCreate(['name' => 'dg']);
         $rh              = Role::firstOrCreate(['name' => 'rh']);
         $respDepartement = Role::firstOrCreate(['name' => 'responsable-departement']);
         $respService     = Role::firstOrCreate(['name' => 'responsable-service']);
@@ -85,8 +85,8 @@ class PermissionSeeder extends Seeder
         // PERMISSIONS PAR RÔLE
         // -------------------------
 
-        // ADMIN → tout
-        $admin->givePermissionTo([
+        // SUPER ADMIN → tout
+        $superAdmin->givePermissionTo([
             // Employés
             'telecharger badge',
             'voir employes', 'creer employes', 'modifier employes', 'supprimer employes',
@@ -107,8 +107,8 @@ class PermissionSeeder extends Seeder
             'voir contrats', 'creer contrats', 'modifier contrats', 'telecharger contrats',
         ]);
 
-        // DIRECTEUR GÉNÉRAL
-        $dg->givePermissionTo([
+        // ADMIN (ex-DG)
+        $admin->givePermissionTo([
             'telecharger badge',
             'voir employes',
             'voir departements',
@@ -164,8 +164,8 @@ class PermissionSeeder extends Seeder
         // ASSIGNER LES RÔLES AUX UTILISATEURS EXISTANTS
         // -------------------------
 
+        User::where('role', 'super-admin')->each(fn($u) => $u->assignRole('super-admin'));
         User::where('role', 'admin')->each(fn($u) => $u->assignRole('admin'));
-        User::where('role', 'dg')->each(fn($u) => $u->assignRole('dg'));
         User::where('role', 'rh')->each(fn($u) => $u->assignRole('rh'));
         User::where('role', 'responsable-departement')->each(fn($u) => $u->assignRole('responsable-departement'));
         User::where('role', 'responsable-service')->each(fn($u) => $u->assignRole('responsable-service'));

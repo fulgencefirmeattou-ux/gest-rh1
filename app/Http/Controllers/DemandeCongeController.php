@@ -41,7 +41,7 @@ class DemandeCongeController extends Controller
                     ?->notify(new CongeNotification($conge, 'etape_suivante'));
             }
         } elseif ($conge->statut === 'attente_dg') {
-            User::whereIn('role', ['dg', 'rh'])->get()
+            User::where('role', 'rh')->get()
                 ->each(fn($u) => $u->notify(new CongeNotification($conge, 'etape_suivante')));
         }
     }
@@ -103,7 +103,7 @@ class DemandeCongeController extends Controller
         } elseif ($statutInitial === 'attente_departement' && $employe->departement?->responsable_id) {
             User::find($employe->departement->responsable_id)?->notify(new CongeNotification($conge, 'nouvelle'));
         } else {
-            User::whereIn('role', ['dg', 'rh'])->get()->each(fn($u) => $u->notify(new CongeNotification($conge, 'nouvelle')));
+            User::where('role', 'rh')->get()->each(fn($u) => $u->notify(new CongeNotification($conge, 'nouvelle')));
         }
 
         return redirect()->route('conges.voir')->with('success', 'Demande envoyee avec succes.');
@@ -191,7 +191,7 @@ class DemandeCongeController extends Controller
     public function traiterDg(Request $request, $id)
     {
         $request->validate(['action' => 'required|in:approve,reject', 'commentaire' => 'nullable|string|max:500']);
-        if (!in_array(auth()->user()->role, ['dg', 'rh', 'admin'])) abort(403);
+        if (!in_array(auth()->user()->role, ['admin', 'rh', 'super-admin'])) abort(403);
 
         $conge = DemandeConge::with('employe')->findOrFail($id);
         if ($request->action === 'approve') {

@@ -11,7 +11,7 @@ class CongeApprobationDgRhController extends Controller
 {
     private function autoriser(): void
     {
-        if (!in_array(auth()->user()->role, ['dg', 'rh', 'admin'])) {
+        if (!in_array(auth()->user()->role, ['admin', 'rh', 'super-admin'])) {
             abort(403, "Acces non autorise.");
         }
     }

@@ -75,7 +75,7 @@
                         <div class="row g-3">
                             <div class="col-md-4">
                                 <label class="form-label small">Salaire de base <span class="text-danger">*</span></label>
-                                <input type="number" name="salaire_base" id="salaire_base" class="form-control form-control-sm calcul" value="{{ old('salaire_base') }}" min="0" step="1" required>
+                                <input type="number" name="salaire_base" id="salaire_base" class="form-control form-control-sm calcul" value="{{ old('salaire_base') }}" min="0" step="1" required readonly style="background:#e9ecef;cursor:not-allowed;">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label small">Avantage en nature</label>
@@ -87,7 +87,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label small">Heures d'absence <span class="text-muted">(retenue auto)</span></label>
-                                <input type="number" name="heures_absence" id="heures_absence" class="form-control form-control-sm calcul" value="{{ old('heures_absence', 0) }}" min="0" step="0.5">
+                                <input type="number" name="heures_absence" id="heures_absence" class="form-control form-control-sm calcul" value="{{ old('heures_absence', 0) }}" min="0" step="0.5" readonly style="background:#e9ecef;cursor:not-allowed;">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label small">Brut imposable</label>
@@ -291,107 +291,116 @@
 
     function remplirPreview(data) {
         const map = {
-            p_is_employeur: data.is_employeur
-            , p_fdfp_ta: data.fdfp_ta
-            , p_fdfp_fpc: data.fdfp_fpc
-            , p_total_fisc_emp: data.total_charges_fiscales_emp
-            , p_cnps_pf: data.cnps_pf_emp
-            , p_cnps_at: data.cnps_at_emp
-            , p_cnps_retraite: data.cnps_retraite_emp
-            , p_cmu_emp: data.cmu_emp
-            , p_total_soc_emp: data.total_charges_sociales_emp
-            , p_total_patronales: data.total_charges_patronales
-            , p_retenue_is: data.retenue_is
-            , p_retenue_cn: data.retenue_cn
-            , p_retenue_igr: data.retenue_igr
-            , p_retenue_cnps: data.retenue_cnps
-            , p_retenue_cmu: data.retenue_cmu
-            , p_total_retenues: data.total_retenues
-            , p_retenue_absences: data.retenue_absences
-            , p_salaire_brut: data.salaire_brut
-            , p_salaire_net: data.salaire_net
-            , p_net_a_payer: data.net_a_payer
-        , };
+            p_is_employeur:     data.is_employeur,
+            p_fdfp_ta:          data.fdfp_ta,
+            p_fdfp_fpc:         data.fdfp_fpc,
+            p_total_fisc_emp:   data.total_charges_fiscales_emp,
+            p_cnps_pf:          data.cnps_pf_emp,
+            p_cnps_at:          data.cnps_at_emp,
+            p_cnps_retraite:    data.cnps_retraite_emp,
+            p_cmu_emp:          data.cmu_emp,
+            p_total_soc_emp:    data.total_charges_sociales_emp,
+            p_total_patronales: data.total_charges_patronales,
+            p_retenue_is:       data.retenue_is,
+            p_retenue_cn:       data.retenue_cn,
+            p_retenue_igr:      data.retenue_igr,
+            p_retenue_cnps:     data.retenue_cnps,
+            p_retenue_cmu:      data.retenue_cmu,
+            p_total_retenues:   data.total_retenues,
+            p_retenue_absences: data.retenue_absences,
+            p_salaire_brut:     data.salaire_brut,
+            p_salaire_net:      data.salaire_net,
+            p_net_a_payer:      data.net_a_payer,
+        };
         for (const [id, val] of Object.entries(map)) {
             const el = document.getElementById(id);
             if (el) el.textContent = fmt(val);
         }
-        // Remplir les champs cachés
+
         const hidden = {
-            h_is_employeur: data.is_employeur
-            , h_fdfp_ta: data.fdfp_ta
-            , h_fdfp_fpc: data.fdfp_fpc
-            , h_cnps_pf_emp: data.cnps_pf_emp
-            , h_cnps_at_emp: data.cnps_at_emp
-            , h_cnps_retraite_emp: data.cnps_retraite_emp
-            , h_cmu_emp: data.cmu_emp
-            , h_retenue_is: data.retenue_is
-            , h_retenue_cn: data.retenue_cn
-            , h_retenue_igr: data.retenue_igr
-            , h_retenue_cnps: data.retenue_cnps
-            , h_retenue_cmu: data.retenue_cmu
-            , h_retenue_absences: data.retenue_absences
-        , };
+            h_is_employeur:      data.is_employeur,
+            h_fdfp_ta:           data.fdfp_ta,
+            h_fdfp_fpc:          data.fdfp_fpc,
+            h_cnps_pf_emp:       data.cnps_pf_emp,
+            h_cnps_at_emp:       data.cnps_at_emp,
+            h_cnps_retraite_emp: data.cnps_retraite_emp,
+            h_cmu_emp:           data.cmu_emp,
+            h_retenue_is:        data.retenue_is,
+            h_retenue_cn:        data.retenue_cn,
+            h_retenue_igr:       data.retenue_igr,
+            h_retenue_cnps:      data.retenue_cnps,
+            h_retenue_cmu:       data.retenue_cmu,
+            h_retenue_absences:  data.retenue_absences,
+        };
         for (const [id, val] of Object.entries(hidden)) {
             const el = document.getElementById(id);
-            if (el) el.value = val ? ? '';
+            if (el) el.value = val ?? '';
         }
-        // Pré-remplir brut_imposable si vide
+
         const biEl = document.getElementById('brut_imposable');
-        if (biEl && !biEl.value) biEl.value = data.salaire_brut ? ? '';
+        if (biEl && !biEl.value) biEl.value = data.salaire_brut ?? '';
     }
 
     function doCalcul() {
+        const g = id => document.getElementById(id);
         const payload = {
-            salaire_base: document.getElementById('salaire_base') ? .value || 0
-            , avantage_nature: document.getElementById('avantage_nature') ? .value || 0
-            , indemnite_transport: document.getElementById('indemnite_transport') ? .value || 0
-            , brut_imposable: document.getElementById('brut_imposable') ? .value || ''
-            , nbre_parts: document.getElementById('nbre_parts') ? .value || 1
-            , cnps_plafond: document.getElementById('cnps_plafond') ? .value || 70000
-            , cmu_base: document.getElementById('cmu_base') ? .value || 1000
-            , heures_absence: document.getElementById('heures_absence') ? .value || 0
-        , };
+            salaire_base:       g('salaire_base')?.value       || 0,
+            avantage_nature:    g('avantage_nature')?.value    || 0,
+            indemnite_transport:g('indemnite_transport')?.value|| 0,
+            brut_imposable:     g('brut_imposable')?.value     || '',
+            nbre_parts:         g('nbre_parts')?.value         || 1,
+            cnps_plafond:       g('cnps_plafond')?.value       || 70000,
+            cmu_base:           g('cmu_base')?.value           || 1000,
+            heures_absence:     g('heures_absence')?.value     || 0,
+        };
 
         fetch('{{ route('bulletins.calculer') }}', {
-                    method: 'POST'
-                    , headers: {
-                        'Content-Type': 'application/json'
-                        , 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]') ? .content ? ? ''
-                    , }
-                    , body: JSON.stringify(payload)
-                , })
-            .then(r => r.json())
-            .then(data => remplirPreview(data))
-            .catch(() => {});
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]')?.content ?? '',
+            },
+            body: JSON.stringify(payload),
+        })
+        .then(r => r.json())
+        .then(data => remplirPreview(data))
+        .catch(() => {});
     }
 
-    // Auto-remplir salaire depuis l'employé sélectionné
-    document.getElementById('employe_id').addEventListener('change', function() {
-        const id = this.value;
+    // Auto-remplir salaire et heures d'absence depuis l'employé sélectionné
+    function chargerInfoEmploye() {
+        const id   = document.getElementById('employe_id').value;
+        const mois = document.getElementById('mois').value;
         if (!id) return;
-        fetch(`/bulletins/employe/${id}/info`)
+
+        fetch(`/bulletins/employe/${id}/info?mois=${mois}`)
             .then(r => r.json())
             .then(data => {
                 const sb = document.getElementById('salaire_base');
-                if (sb && (!sb.value || sb.value === '0')) sb.value = data.salaire_base ? ? '';
+                if (sb) sb.value = data.salaire_base ?? '';
+
+                const ha = document.getElementById('heures_absence');
+                if (ha) ha.value = data.heures_absence ?? 0;
+
                 doCalcul();
             })
             .catch(() => {});
+    }
+
+    document.getElementById('employe_id').addEventListener('change', chargerInfoEmploye);
+    document.getElementById('mois').addEventListener('change', function () {
+        if (document.getElementById('employe_id').value) chargerInfoEmploye();
     });
 
-    // Recalcul à chaque changement
     document.querySelectorAll('.calcul').forEach(el => {
         el.addEventListener('input', () => setTimeout(doCalcul, 300));
     });
 
     document.getElementById('btnCalculer').addEventListener('click', doCalcul);
 
-    // Calcul initial si old() est présent
     window.addEventListener('DOMContentLoaded', () => {
-        if (document.getElementById('salaire_base') ? .value) doCalcul();
+        if (document.getElementById('salaire_base')?.value) doCalcul();
     });
-
 </script>
 @endpush
 @endsection

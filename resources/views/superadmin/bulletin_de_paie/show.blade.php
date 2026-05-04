@@ -7,7 +7,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold mb-0"><i class="ri-file-text-line me-2"></i>Bulletin de paie</h2>
         <div class="d-flex gap-2">
-            <a href="{{ route('bulletins.index') }}" class="btn btn-outline-secondary btn-sm">
+            <a href="{{ route('bulletins.create') }}" class="btn btn-outline-secondary btn-sm">
                 <i class="ri-arrow-left-line me-1"></i>Retour
             </a>
             <a href="{{ route('bulletins.download', $bulletin) }}" class="btn btn-outline-danger btn-sm">

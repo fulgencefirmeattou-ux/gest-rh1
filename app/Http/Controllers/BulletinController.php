@@ -56,14 +56,36 @@ class BulletinController extends Controller
         $employe = Employe::with(['contrats' => fn($q) => $q->where('statut', 'actif')->latest()])->findOrFail($id);
         $contrat = $employe->contrats->first();
 
+        // Calcul des heures d'absence validées pour le mois sélectionné
+        $mois = request('mois', now()->format('Y-m'));
+        [$year, $month] = explode('-', $mois . '-' . now()->month); // sécurité si format incomplet
+
+        $absences = \App\Models\Absence::where('employe_id', $id)
+            ->where('statut', 'validee')
+            ->whereYear('date_absence', $year)
+            ->whereMonth('date_absence', $month)
+            ->get();
+
+        $totalHeures = $absences->sum(function ($absence) {
+            if ($absence->heure_debut && $absence->heure_fin) {
+                $debut = \Carbon\Carbon::parse($absence->heure_debut);
+                $fin   = \Carbon\Carbon::parse($absence->heure_fin);
+                return max(0, $debut->diffInMinutes($fin)) / 60;
+            }
+            // Absence journalière : 8h par jour
+            $jours = max(1, $absence->date_absence->diffInDays($absence->date_fin_absence ?? $absence->date_absence) + 1);
+            return $jours * 8;
+        });
+
         return response()->json([
-            'salaire_base'        => $contrat?->salaire_base ?? $employe->salaire ?? 0,
-            'type_contrat'        => $contrat?->type_contrat ?? '—',
-            'matricule'           => $employe->matricule,
-            'nom'                 => $employe->nom,
-            'prenom'              => $employe->prenom,
-            'date_embauche'       => $employe->date_embauche?->format('d/m/Y'),
-            'date_naissance'      => $employe->date_naissance?->format('d/m/Y'),
+            'salaire_base'   => $contrat?->salaire_base ?? $employe->salaire ?? 0,
+            'heures_absence' => round($totalHeures, 2),
+            'type_contrat'   => $contrat?->type_contrat ?? '—',
+            'matricule'      => $employe->matricule,
+            'nom'            => $employe->nom,
+            'prenom'         => $employe->prenom,
+            'date_embauche'  => $employe->date_embauche?->format('d/m/Y'),
+            'date_naissance' => $employe->date_naissance?->format('d/m/Y'),
         ]);
     }
 

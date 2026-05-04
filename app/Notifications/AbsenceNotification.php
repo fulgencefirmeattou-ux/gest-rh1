@@ -61,6 +61,7 @@ class AbsenceNotification extends Notification
             'nouvelle' => [
                 'titre'   => "Nouvelle absence — {$nom}",
                 'message' => "Absence de type « " . $this->absence->typeLabel() . " » le " . $this->absence->date_absence->format('d/m/Y'),
+                'motif'   => $this->absence->motif ?? null,
                 'url'     => '/rh',
                 'icone'   => 'ri-error-warning-line',
                 'couleur' => 'warning',
@@ -68,6 +69,7 @@ class AbsenceNotification extends Notification
             'validee' => [
                 'titre'   => "Absence validée",
                 'message' => "Votre absence du " . $this->absence->date_absence->format('d/m/Y') . " a été validée.",
+                'motif'   => $this->absence->commentaire_rh ?? null,
                 'url'     => route('justificatifs.absence.liste'),
                 'icone'   => 'ri-checkbox-circle-line',
                 'couleur' => 'success',
@@ -75,11 +77,12 @@ class AbsenceNotification extends Notification
             'rejetee' => [
                 'titre'   => "Absence rejetée",
                 'message' => "Votre absence du " . $this->absence->date_absence->format('d/m/Y') . " a été rejetée.",
+                'motif'   => $this->absence->commentaire_rh ?? null,
                 'url'     => route('justificatifs.absence.liste'),
                 'icone'   => 'ri-close-circle-line',
                 'couleur' => 'danger',
             ],
-            default => ['titre' => 'Absence', 'message' => '', 'url' => '#', 'icone' => 'ri-notification-line', 'couleur' => 'info'],
+            default => ['titre' => 'Absence', 'message' => '', 'motif' => null, 'url' => '#', 'icone' => 'ri-notification-line', 'couleur' => 'info'],
         };
     }
 

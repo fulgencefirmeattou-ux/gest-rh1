@@ -17,8 +17,8 @@ class NotificationController extends Controller
     {
         $notif = auth()->user()->notifications()->findOrFail($id);
         $notif->markAsRead();
-        $url = $notif->data['url'] ?? null;
-        return ($url && $url !== '#') ? redirect($url) : redirect()->route('notifications.index');
+        $url = (!empty($notif->data['url']) && $notif->data['url'] !== '#') ? $notif->data['url'] : null;
+        return view('superadmin.notifications.go', compact('notif', 'url'));
     }
 
     public function markRead(string $id)

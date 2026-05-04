@@ -65,10 +65,10 @@ class DatabaseSeeder extends Seeder
             'nom'      => 'Admin',
             'prenom'   => 'Super',
             'password' => Hash::make('password'),
-            'role'     => 'admin',
+            'role'     => 'super-admin',
             'login'    => 'ADM000001',
         ]);
-        $admin->syncRoles(['admin']);
+        $admin->syncRoles(['super-admin']);
 
         $rh = User::firstOrCreate(['email' => 'rh@gestRH.com'], [
             'nom'      => 'Dupont',
@@ -83,10 +83,10 @@ class DatabaseSeeder extends Seeder
             'nom'      => 'Konan',
             'prenom'   => 'Jean-Baptiste',
             'password' => Hash::make('password'),
-            'role'     => 'dg',
+            'role'     => 'admin',
             'login'    => 'DG000001',
         ]);
-        $dg->syncRoles(['dg']);
+        $dg->syncRoles(['admin']);
 
         // ── 6. Responsables de service (1 par département) ────────
         $respServicesData = [

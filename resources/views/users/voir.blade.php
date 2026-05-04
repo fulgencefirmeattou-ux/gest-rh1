@@ -262,8 +262,8 @@
                                                     <label for="role" class="form-label">Rôle</label>
                                                     <select name="role" id="role" class="form-select" required>
                                                         <option value="" disabled>-- Sélectionner un rôle --</option>
+                                                        <option value="super-admin" {{ $user->role === 'super-admin' ? 'selected' : '' }}>Super Administrateur</option>
                                                         <option value="admin" {{ $user->role === 'admin' ? 'selected' : '' }}>Administrateur</option>
-                                                        <option value="dg" {{ $user->role === 'dg' ? 'selected' : '' }}>DG</option>
                                                         <option value="employe" {{ $user->role === 'employe' ? 'selected' : '' }}>Employé</option>
                                                         <option value="responsable" {{ $user->role === 'responsable' ? 'selected' : '' }}>Responsable</option>
                                                         <option value="rh" {{ $user->role === 'rh' ? 'selected' : '' }}>RH</option>

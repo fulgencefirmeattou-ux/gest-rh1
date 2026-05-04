@@ -29,7 +29,7 @@
                             <tbody>
                                 @foreach ($absences as $index => $absence)
                                     <tr>
-                                        <td>{{ $absence->employe->nom }} {{ $absence->employe->prenom }}</td>
+                                        <td>{{ $absence->employe?->nom ?? '—' }} {{ $absence->employe?->prenom ?? '' }}</td>
                                         <td><span class="badge bg-secondary">{{ $absence->typeLabel() }}</span></td>
                                         <td>{{ $absence->date_absence->format('d/m/Y') }}</td>
                                         {{-- <td>{{ $conge->date_fin_conge->format('d/m/Y') }}</td> --}}

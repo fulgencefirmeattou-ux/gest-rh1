@@ -119,9 +119,14 @@
         <div class="col-lg-8">
             <div class="card h-100">
                 <div class="card-header d-flex align-items-center justify-content-between bg-transparent border-bottom-0 pt-3">
-                    <h5 class="card-title mb-0">
-                        <i class="ri-bar-chart-2-line me-2 text-primary"></i>Masse salariale — 6 derniers mois
+                    <h5 class="card-title mb-0" id="titre-salaire">
+                        <i class="ri-bar-chart-2-line me-2 text-primary"></i>Masse salariale — {{ last($labelsGraphique) }}
                     </h5>
+                    <select id="select-annee" class="form-select form-select-sm w-auto">
+                        @foreach($labelsGraphique as $annee)
+                            <option value="{{ $annee }}" @if($loop->last) selected @endif>{{ $annee }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <div class="card-body pt-0">
                     <div id="chart-salaire" style="min-height:260px;"></div>
@@ -247,7 +252,7 @@
                                         <td class="ps-3">
                                             <div class="d-flex align-items-center gap-2">
                                                 @if($emp->photo_profil)
-                                                    <img src="{{ asset("public/images/employes/{$emp->photo_profil}") }}"
+                                                    <img src="{{ asset($emp->photo_profil) }}"
                                                          class="rounded-circle"
                                                          style="width:32px;height:32px;object-fit:cover;"
                                                          alt="">
@@ -293,13 +298,15 @@
 document.addEventListener('DOMContentLoaded', function () {
 
     // ── Graphique masse salariale ────────────────────────────────────────
-    var labels  = @json($labelsGraphique);
-    var valeurs = @json($masseSalarialeParMois);
+    var donneesParAnnee = @json($donneesParAnnee);
+    var labelsMois      = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+    var selectAnnee     = document.getElementById('select-annee');
+    var anneeDefaut     = selectAnnee.value;
 
-    var optSalaire = {
+    var chartSalaire = new ApexCharts(document.querySelector('#chart-salaire'), {
         chart: { type: 'area', height: 260, toolbar: { show: false }, sparkline: { enabled: false } },
-        series: [{ name: 'Net à payer (FCFA)', data: valeurs }],
-        xaxis: { categories: labels, labels: { style: { fontSize: '11px' } } },
+        series: [{ name: 'Net à payer (FCFA)', data: donneesParAnnee[anneeDefaut] || [] }],
+        xaxis: { categories: labelsMois, labels: { style: { fontSize: '11px' } } },
         yaxis: { labels: { formatter: v => new Intl.NumberFormat('fr-FR').format(v) } },
         colors: ['#5b73e8'],
         fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.05 } },
@@ -307,8 +314,17 @@ document.addEventListener('DOMContentLoaded', function () {
         tooltip: { y: { formatter: v => new Intl.NumberFormat('fr-FR').format(v) + ' FCFA' } },
         dataLabels: { enabled: false },
         grid: { borderColor: '#f1f3fa' },
-    };
-    new ApexCharts(document.querySelector('#chart-salaire'), optSalaire).render();
+    });
+    chartSalaire.render();
+
+    selectAnnee.addEventListener('change', function () {
+        chartSalaire.updateOptions({
+            xaxis: { categories: labelsMois, labels: { style: { fontSize: '11px' } } },
+            series: [{ name: 'Net à payer (FCFA)', data: donneesParAnnee[this.value] || [] }],
+        });
+        document.getElementById('titre-salaire').innerHTML =
+            '<i class="ri-bar-chart-2-line me-2 text-primary"></i>Masse salariale — ' + this.value;
+    });
 
     @if($repartitionDept->isNotEmpty())
     // ── Graphique répartition département ─────────────────────────────────

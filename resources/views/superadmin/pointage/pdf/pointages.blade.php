@@ -92,9 +92,5 @@
             </tr>
         </table>
     @endif
-
-    <div class="footer" style="clear:both; padding-top:30px;">
-        Document généré automatiquement — Système de Gestion RH
-    </div>
 </body>
 </html>

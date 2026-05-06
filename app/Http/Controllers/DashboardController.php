@@ -56,6 +56,7 @@ class DashboardController extends Controller
         $pointagesPresents   = Pointage::whereDate('date', today())->whereNotNull('heure_arrivee')->count();
 
         [$masseSalarialeParMois, $labelsGraphique] = $this->tendanceSalariale($now);
+        $donneesParAnnee = $this->detailParAnnee();
 
         $repartitionDept = $this->repartitionDepartements();
 
@@ -64,7 +65,7 @@ class DashboardController extends Controller
             'masseSalarialeMois', 'bulletinsMois', 'nouveauxEmployesMois',
             'contratsExpirantBientot', 'derniersEmployes',
             'pointagesAujourdhui', 'pointagesPresents',
-            'masseSalarialeParMois', 'labelsGraphique', 'repartitionDept'
+            'masseSalarialeParMois', 'labelsGraphique', 'repartitionDept', 'donneesParAnnee'
         ));
     }
 
@@ -117,12 +118,13 @@ class DashboardController extends Controller
             ->where('statut', 'attente_dg')->latest()->limit(6)->get();
 
         [$masseSalarialeParMois, $labelsGraphique] = $this->tendanceSalariale($now);
+        $donneesParAnnee = $this->detailParAnnee();
         $repartitionDept = $this->repartitionDepartements();
 
         return view('superadmin.dashboard-dg', compact(
             'totalEmployes', 'masseSalarialeMois', 'bulletinsMois',
             'pointagesPresents', 'congesEnAttente',
-            'congesAValider', 'masseSalarialeParMois', 'labelsGraphique', 'repartitionDept'
+            'congesAValider', 'masseSalarialeParMois', 'labelsGraphique', 'repartitionDept', 'donneesParAnnee'
         ));
     }
 
@@ -243,14 +245,43 @@ class DashboardController extends Controller
     {
         $valeurs = [];
         $labels  = [];
-        for ($i = 5; $i >= 0; $i--) {
-            $mois = $now->copy()->subMonths($i);
-            $labels[]  = $mois->translatedFormat('M Y');
-            $valeurs[] = (int) BulletinPaie::whereMonth('periode_debut', $mois->month)
-                ->whereYear('periode_debut', $mois->year)
+
+        $annees = BulletinPaie::selectRaw('YEAR(periode_debut) as annee')
+            ->groupBy('annee')
+            ->orderBy('annee')
+            ->pluck('annee');
+
+        if ($annees->isEmpty()) {
+            $annees = collect([$now->year]);
+        }
+
+        foreach ($annees as $annee) {
+            $labels[]  = (string) $annee;
+            $valeurs[] = (int) BulletinPaie::whereYear('periode_debut', $annee)
                 ->sum('net_a_payer');
         }
+
         return [$valeurs, $labels];
+    }
+
+    private function detailParAnnee(): array
+    {
+        $annees = BulletinPaie::selectRaw('YEAR(periode_debut) as annee')
+            ->groupBy('annee')
+            ->orderBy('annee')
+            ->pluck('annee');
+
+        $data = [];
+        foreach ($annees as $annee) {
+            $mensuel = [];
+            for ($m = 1; $m <= 12; $m++) {
+                $mensuel[] = (int) BulletinPaie::whereYear('periode_debut', $annee)
+                    ->whereMonth('periode_debut', $m)
+                    ->sum('net_a_payer');
+            }
+            $data[(string) $annee] = $mensuel;
+        }
+        return $data;
     }
 
     private function repartitionDepartements()

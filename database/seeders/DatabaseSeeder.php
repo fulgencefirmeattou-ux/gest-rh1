@@ -224,6 +224,9 @@ class DatabaseSeeder extends Seeder
         // ── 14. Info Entreprise ───────────────────────────────────
         $this->call(InfoEntrepriseSeeder::class);
 
+        // ── 15. Données historiques 2025 ──────────────────────────
+        $this->call(Seed2025Seeder::class);
+
         $this->command->info('');
         $this->command->info('✓ Seed terminé. Comptes disponibles :');
         $this->command->info('  admin@gestRH.com        → password  (admin)');

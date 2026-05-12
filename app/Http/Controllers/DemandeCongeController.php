@@ -16,7 +16,8 @@ class DemandeCongeController extends Controller
     private function employeOuAbort(): Employe
     {
         $employe = auth()->user()->employe;
-        if (!$employe) abort(403);
+        if (!$employe)
+            abort(403);
         return $employe;
     }
 
@@ -24,11 +25,11 @@ class DemandeCongeController extends Controller
     {
         HistoriqueConge::create([
             'demande_conge_id' => $conge->id,
-            'approver_id'      => auth()->id(),
-            'etape'            => $etape,
-            'decision'         => $decision,
-            'commentaire'      => $commentaire,
-            'approved_at'      => now(),
+            'approver_id' => auth()->id(),
+            'etape' => $etape,
+            'decision' => $decision,
+            'commentaire' => $commentaire,
+            'approved_at' => now(),
         ]);
     }
 
@@ -38,7 +39,7 @@ class DemandeCongeController extends Controller
             $service = $conge->employe->service;
             if ($service?->departement?->responsable_id) {
                 User::find($service->departement->responsable_id)
-                    ?->notify(new CongeNotification($conge, 'etape_suivante'));
+                        ?->notify(new CongeNotification($conge, 'etape_suivante'));
             }
         } elseif ($conge->statut === 'attente_dg') {
             User::where('role', 'rh')->get()
@@ -49,7 +50,7 @@ class DemandeCongeController extends Controller
     public function index()
     {
         $employe = $this->employeOuAbort();
-        $conges  = DemandeConge::where('employe_id', $employe->id)->orderBy('created_at', 'desc')->get();
+        $conges = DemandeConge::where('employe_id', $employe->id)->orderBy('created_at', 'desc')->get();
         return view('superadmin.conges.voir', compact('conges', 'employe'));
     }
 
@@ -63,21 +64,37 @@ class DemandeCongeController extends Controller
     {
         $employe = $this->employeOuAbort();
         $request->validate([
-            'type_conge'       => 'required|in:conge_paye,maladie,permission_courte,exceptionnel,special,autre',
+            'type_conge' => 'required|in:conge_paye,maladie,permission_courte,exceptionnel,special,autre',
             'date_debut_conge' => 'required|date',
-            'date_fin_conge'   => 'required|date|after_or_equal:date_debut_conge',
-            'date_retour'      => 'nullable|date|after_or_equal:date_fin_conge',
-            'raison'           => 'nullable|string|max:1000',
+            'date_fin_conge' => 'required|date|after_or_equal:date_debut_conge',
+            'date_retour' => 'nullable|date|after_or_equal:date_fin_conge',
+            'raison' => 'nullable|string|max:1000',
+        ], [
+            'type_conge.required' => 'Veuillez selectionner un type de conge.',
+            'type_conge.in' => 'Le type de conge selectionne est invalide.',
+
+            'date_debut_conge.required' => 'La date de debut est obligatoire.',
+            'date_debut_conge.date' => 'La date de debut est invalide.',
+
+            'date_fin_conge.required' => 'La date de fin est obligatoire.',
+            'date_fin_conge.date' => 'La date de fin est invalide.',
+            'date_fin_conge.after_or_equal' => 'La date de fin doit etre superieure ou egale a la date de debut.',
+
+            'date_retour.date' => 'La date de retour est invalide.',
+            'date_retour.after_or_equal' => 'La date de retour doit etre superieure ou egale a la date de fin.',
+
+            'raison.string' => 'La raison doit etre une chaine de caracteres.',
+            'raison.max' => 'La raison ne doit pas depasser 1000 caracteres.',
         ]);
 
         if ($request->type_conge === 'permission_courte' && $employe->soldePermissionsRestant() <= 0) {
             return back()->withErrors(['type_conge' => 'Solde de permissions epuise (' . $employe->permissions_prises . '/10).'])->withInput();
         }
 
-        $service      = $employe->service;
-        $departement  = $service?->departement;
+        $service = $employe->service;
+        $departement = $service?->departement;
         $hasChefService = $service && $service->responsable_id && $service->responsable_id !== $employe->id;
-        $hasChefDept    = $departement && $departement->responsable_id && $departement->responsable_id !== $employe->id;
+        $hasChefDept = $departement && $departement->responsable_id && $departement->responsable_id !== $employe->id;
 
         if ($hasChefService) {
             $statutInitial = 'attente_service';
@@ -88,13 +105,13 @@ class DemandeCongeController extends Controller
         }
 
         $conge = DemandeConge::create([
-            'employe_id'       => $employe->id,
-            'type_conge'       => $request->type_conge,
+            'employe_id' => $employe->id,
+            'type_conge' => $request->type_conge,
             'date_debut_conge' => $request->date_debut_conge,
-            'date_fin_conge'   => $request->date_fin_conge,
-            'date_retour'      => $request->date_retour,
-            'raison'           => $request->raison,
-            'statut'           => $statutInitial,
+            'date_fin_conge' => $request->date_fin_conge,
+            'date_retour' => $request->date_retour,
+            'raison' => $request->raison,
+            'statut' => $statutInitial,
         ]);
 
         if ($statutInitial === 'attente_service' && $employe->service?->responsable_id) {
@@ -111,7 +128,7 @@ class DemandeCongeController extends Controller
 
     public function show($id)
     {
-        $user  = auth()->user();
+        $user = auth()->user();
         $conge = DemandeConge::with(['employe', 'historiques.approver'])->findOrFail($id);
         return view('superadmin.conges.details', compact('conge', 'user'));
     }
@@ -119,20 +136,21 @@ class DemandeCongeController extends Controller
     public function resubmit(Request $request, $id)
     {
         $employe = $this->employeOuAbort();
-        $conge   = DemandeConge::findOrFail($id);
-        if ($conge->employe_id !== $employe->id) abort(403);
+        $conge = DemandeConge::findOrFail($id);
+        if ($conge->employe_id !== $employe->id)
+            abort(403);
         $request->validate([
             'date_debut_conge' => 'required|date',
-            'date_fin_conge'   => 'required|date|after_or_equal:date_debut_conge',
-            'date_retour'      => 'nullable|date|after_or_equal:date_fin_conge',
+            'date_fin_conge' => 'required|date|after_or_equal:date_debut_conge',
+            'date_retour' => 'nullable|date|after_or_equal:date_fin_conge',
         ]);
         $conge->update([
             'date_debut_conge' => $request->date_debut_conge,
-            'date_fin_conge'   => $request->date_fin_conge,
-            'date_retour'      => $request->date_retour,
-            'raison'           => $request->raison,
-            'statut'           => 'attente_service',
-            'commentaire'      => null,
+            'date_fin_conge' => $request->date_fin_conge,
+            'date_retour' => $request->date_retour,
+            'raison' => $request->raison,
+            'statut' => 'attente_service',
+            'commentaire' => null,
         ]);
         return redirect()->route('conges.voir')->with('success', 'Demande renvoyee.');
     }
@@ -141,20 +159,21 @@ class DemandeCongeController extends Controller
     {
         $request->validate(['action' => 'required|in:approve,modify,reject', 'commentaire' => 'nullable|string|max:500']);
         $employe = auth()->user()->employe;
-        if (!$employe || !Service::where('responsable_id', $employe->id)->exists()) abort(403);
+        if (!$employe || !Service::where('responsable_id', $employe->id)->exists())
+            abort(403);
 
         $conge = DemandeConge::with('employe')->findOrFail($id);
 
         // Si approbation : vérifier s'il y a un chef département sinon sauter à attente_dg
         if ($request->action === 'approve') {
-            $service     = $conge->employe?->service;
+            $service = $conge->employe?->service;
             $departement = $service?->departement;
             $hasDeptChef = $departement && $departement->responsable_id;
             $approveStatut = $hasDeptChef ? 'attente_departement' : 'attente_dg';
         }
 
-        $newStatut = match($request->action) { 'approve' => $approveStatut, 'modify' => 'modification_demandee', 'reject' => 'rejetee' };
-        $decision  = match($request->action) { 'approve' => 'approuve', 'modify' => 'modification_demandee', 'reject' => 'rejete' };
+        $newStatut = match ($request->action) { 'approve' => $approveStatut, 'modify' => 'modification_demandee', 'reject' => 'rejetee'};
+        $decision = match ($request->action) { 'approve' => 'approuve', 'modify' => 'modification_demandee', 'reject' => 'rejete'};
 
         $conge->update(['statut' => $newStatut, 'commentaire' => $request->commentaire]);
         $this->enregistrerHistorique($conge, 'service', $decision, $request->commentaire);
@@ -172,7 +191,8 @@ class DemandeCongeController extends Controller
     {
         $request->validate(['action' => 'required|in:approve,reject', 'commentaire' => 'nullable|string|max:500']);
         $employe = auth()->user()->employe;
-        if (!$employe || !Departement::where('responsable_id', $employe->id)->exists()) abort(403);
+        if (!$employe || !Departement::where('responsable_id', $employe->id)->exists())
+            abort(403);
 
         $conge = DemandeConge::with('employe')->findOrFail($id);
         $newStatut = $request->action === 'approve' ? 'attente_dg' : 'rejetee';
@@ -191,15 +211,18 @@ class DemandeCongeController extends Controller
     public function traiterDg(Request $request, $id)
     {
         $request->validate(['action' => 'required|in:approve,reject', 'commentaire' => 'nullable|string|max:500']);
-        if (!in_array(auth()->user()->role, ['admin', 'rh', 'super-admin'])) abort(403);
+        if (!in_array(auth()->user()->role, ['admin', 'rh', 'super-admin']))
+            abort(403);
 
         $conge = DemandeConge::with('employe')->findOrFail($id);
         if ($request->action === 'approve') {
             $conge->update(['statut' => 'approuvee', 'commentaire' => null]);
             $employe = $conge->employe;
             if ($employe) {
-                if ($conge->estPermission()) $employe->increment('permissions_prises');
-                else $employe->increment('conges_pris', max(1, $conge->jours_ouvres));
+                if ($conge->estPermission())
+                    $employe->increment('permissions_prises');
+                else
+                    $employe->increment('conges_pris', max(1, $conge->jours_ouvres));
             }
             $conge->employe?->user?->notify(new CongeNotification($conge, 'approuvee'));
         } else {

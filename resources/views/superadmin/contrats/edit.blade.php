@@ -40,7 +40,7 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Type de contrat <span class="text-danger">*</span></label>
-                        <select name="type_contrat" id="type_contrat" class="form-select @error('type_contrat') is-invalid @enderror" required>
+                        <select name="type_contrat" id="type_contrat" class="form-select @error('type_contrat') is-invalid @enderror">
                             <option value="">-- Choisir --</option>
                             @foreach(['CDI', 'CDD', 'Stage', 'Consultant'] as $type)
                                 <option value="{{ $type }}" {{ old('type_contrat', $contrat->type_contrat) === $type ? 'selected' : '' }}>
@@ -48,9 +48,6 @@
                                 </option>
                             @endforeach
                         </select>
-                        @error('type_contrat')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
                     </div>
 
                     <div class="col-md-6">
@@ -69,10 +66,7 @@
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Date de début <span class="text-danger">*</span></label>
                         <input type="date" name="date_debut" class="form-control @error('date_debut') is-invalid @enderror"
-                               value="{{ old('date_debut', \Carbon\Carbon::parse($contrat->date_debut)->format('Y-m-d')) }}" required>
-                        @error('date_debut')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                               value="{{ old('date_debut', \Carbon\Carbon::parse($contrat->date_debut)->format('Y-m-d')) }}">
                     </div>
 
                     <div class="col-md-6">
@@ -87,10 +81,7 @@
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Salaire de base (FCFA) <span class="text-danger">*</span></label>
                         <input type="number" name="salaire_base" class="form-control @error('salaire_base') is-invalid @enderror"
-                               value="{{ old('salaire_base', $contrat->salaire_base) }}" min="0" required>
-                        @error('salaire_base')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                               value="{{ old('salaire_base', $contrat->salaire_base) }}" min="0" >
                     </div>
 
                     <div class="col-md-6">

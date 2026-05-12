@@ -145,7 +145,7 @@ class AbsenceController extends Controller
     public function ListeDemandeAbsenceTraiter()
     {
         $this->autoriserRhDg();
-        $absences = Absence::with('employe')->whereIn('statut', ['validee', 'rejetee'])->orderBy('updated_at', 'desc')->get();
+        $absences = Absence::with('employe')->whereIn('statut', ['validee', 'rejetee'])->orderBy('date_absence', 'desc')->paginate(7);
         return view('superadmin.justificatifs.absence-traiter', compact('absences'));
     }
 

@@ -66,7 +66,9 @@
                         </table>
                     </div>        
                 </div>
-                
+                <div class="d-flex justify-content-end mt-3">
+                    {{ $absences->links() }}
+                </div>
             @endif
 
             

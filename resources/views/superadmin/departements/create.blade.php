@@ -25,7 +25,7 @@
             @csrf
             <div class="mb-3">
                 <label for="nom" class="form-label">Nom</label>
-                <input type="text" name="nom" id="nom" class="form-control" value="{{ old('nom') }}" required>
+                <input type="text" name="nom" id="nom" class="form-control" value="{{ old('nom') }}">
             </div>
             <div class="mb-3">
                 <label for="description" class="form-label">Description</label>

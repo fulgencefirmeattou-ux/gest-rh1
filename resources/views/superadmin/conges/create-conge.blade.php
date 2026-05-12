@@ -22,6 +22,7 @@
                         </ul>
                     </div>
                 @endif  
+
                 <form method="POST" action="{{ route('conges.store') }}" class="bg-white p-4 rounded shadow-sm">
                     @csrf
 
@@ -35,6 +36,7 @@
                         <option value="special">Congé spécial</option>
                         <option value="autre">Autre</option>
                     </select><br>
+
 
                     <label>Date de début</label>
                     <input type="date" name="date_debut_conge" class="form-control"><br>

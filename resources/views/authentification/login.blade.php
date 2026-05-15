@@ -43,28 +43,28 @@
                                     </div>
                                     <div class="p-4 my-auto">
                                         @if (session('success'))
-                                            <div class="alert alert-success">
-                                                {{ session('success') }}
-                                            </div>
+                                        <div class="alert alert-success">
+                                            {{ session('success') }}
+                                        </div>
                                         @endif
                                         @if ($errors->any())
-                                            <div class="alert alert-danger">
-                                                <ul class="mb-0">
-                                                    @foreach ($errors->all() as $error)
-                                                        <li>{{ $error }}</li>
-                                                    @endforeach
-                                                </ul>
-                                            </div>
+                                        <div class="alert alert-danger">
+                                            <ul class="mb-0">
+                                                @foreach ($errors->all() as $error)
+                                                <li>{{ $error }}</li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
                                         @endif
 
                                         @if (session('status'))
-                                            <div class="alert alert-success">
-                                                <p style="color: green;">{{ session('status') }}</p>
-                                            </div>
+                                        <div class="alert alert-success">
+                                            <p style="color: green;">{{ session('status') }}</p>
+                                        </div>
                                         @endif
                                         <h4 class="fs-20 text-dark">Connexion</h4>
                                         <p class="text-muted mb-3">Entrer votre addresse email et votre mot de passe pour accéder à votre compte</p>
-                                        
+
 
                                         <!-- form -->
                                         <form action="{{ route('login') }}" method="POST">
@@ -74,45 +74,34 @@
                                                 <div class="mb-1">
                                                     <label for="emailaddress" class="form-label text-dark">Votre Email ou matricule</label>
                                                     {{-- <input class="form-control @error('email') is-invalid @enderror" name="email" type="email" id="emailaddress"  value="{{ old('email') }}" required=""
-                                                        placeholder="Enter your email"> --}}
-                                                    <input class="form-control @error('login') is-invalid @enderror" name="login" type="text" placeholder="Email ou Login" id="emailaddress"  value="{{ old('login') }}">
-
+                                                    placeholder="Enter your email"> --}}
+                                                    <input class="form-control @error('login') is-invalid @enderror" name="login" type="text" placeholder="Email ou Login" id="emailaddress" value="{{ old('login') }}">
                                                 </div>
-                                                @error('email')
-                                                    <div class="text-danger small mb-2">{{ $message }}</div>
-                                                @enderror
                                             </div>
-                                           
-                                            
+
+
                                             <div class="mb-3">
                                                 <div class="mb-1">
                                                     <a href="{{ route('password.request') }}" class="text-primary-emphasis float-end"><small>Mot de passe oublié ?</small></a>
                                                     <label for="password" class="form-label text-dark">Mot de passe</label>
-                                                    <input class="form-control @error('password') is-invalid @enderror" name="password" type="password" required="" id="password"
-                                                        placeholder="Enter your password" >
+                                                    <input class="form-control @error('password') is-invalid @enderror" name="password" type="password" id="password" placeholder="Enter your password">
                                                 </div>
-                                                @error('password')
-                                                    <div class="text-danger small mb-2">{{ $message }}</div>
-                                                @enderror
                                             </div>
-                                    
+
                                             <div class="mb-3">
                                                 <div class="form-check">
-                                                    <input type="checkbox" class="form-check-input"
-                                                        id="checkbox-signin">
+                                                    <input type="checkbox" class="form-check-input" id="checkbox-signin">
                                                     <label class="form-check-label text-dark" for="checkbox-signin">Se rappeler de moi</label>
                                                 </div>
                                             </div>
                                             <div class="mb-0 text-start">
-                                                <button class="btn btn-soft-primary w-100" type="submit"><i
-                                                        class="ri-login-circle-fill me-1"></i> <span class="fw-bold">Connexion</span> </button>
+                                                <button class="btn btn-soft-primary w-100" type="submit"><i class="ri-login-circle-fill me-1"></i> <span class="fw-bold">Connexion</span> </button>
                                             </div>
 
                                             <div class="text-center mt-4">
-                                                <p class="text-dark-emphasis">Vous n'avez pas de compte? <a href="{{ route('contact_admin') }}"
-                                                        class="text-primary-emphasis fw-bold ms-1 link-offset-3 text-decoration-underline"><b>Contactez votre administrateur.</b></a>
+                                                <p class="text-dark-emphasis">Vous n'avez pas de compte? <a href="{{ route('contact_admin') }}" class="text-primary-emphasis fw-bold ms-1 link-offset-3 text-decoration-underline"><b>Contactez votre administrateur.</b></a>
                                                 </p>
-                                               
+
                                             </div>
                                         </form>
                                         <!-- end form-->
@@ -139,7 +128,10 @@
 
     <footer class="footer footer-alt fw-medium">
         <span class="text-dark">
-            Firme informatique <script>document.write(new Date().getFullYear())</script> © Firme Attou Co
+            Firme informatique <script>
+                document.write(new Date().getFullYear())
+
+            </script> © Firme Attou Co
         </span>
     </footer>
     <!-- Vendor js -->

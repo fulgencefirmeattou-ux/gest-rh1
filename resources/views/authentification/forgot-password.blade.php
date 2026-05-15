@@ -43,13 +43,24 @@
                                     </div>
                                     <div class="p-4 my-auto">
                                         @if (session('status'))
-                                            <div class="alert alert-success">
-                                                {{ session('status') }}
-                                            </div>
+                                        <div class="alert alert-success">
+                                            {{ session('status') }}
+                                        </div>
                                         @endif
+
+                                        @if ($errors->any())
+                                        <div class="alert alert-danger">
+                                            <ul>
+                                                @foreach ($errors->all() as $error)
+                                                <li>{{ $error }}</li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                        @endif
+
                                         <h4 class="fs-20 text-dark">Mot de passe oublié</h4>
                                         <p class="text-muted mb-3">Entrer votre addresse email pour rénitialiser votre mot de passe</p>
-                                        
+
 
                                         <!-- form -->
                                         <form action="{{ route('password.email') }}" method="POST">
@@ -58,78 +69,72 @@
                                             <div class="mb-3">
                                                 <div class="mb-1">
                                                     <label for="emailaddress" class="form-label text-dark">Votre Email</label>
-                                                    <input class="form-control @error('email') is-invalid @enderror" name="email" type="email" id="emailaddress"  value="{{ old('email') }}" required=""
-                                                        placeholder="Enter your email">
+                                                    <input class="form-control @error('email') is-invalid @enderror" name="email" type="email" id="emailaddress" value="{{ old('email') }}" placeholder="Enter your email">
                                                 </div>
-                                                @error('email')
-                                                    <div class="text-danger small mb-2">{{ $message }}</div>
-                                                @enderror
                                             </div>
-                                           
-                                            
+
+
                                             {{-- <div class="mb-3">
                                                 <div class="mb-1">
                                                     <a href="{{ route('password.request') }}" class="text-primary-emphasis float-end"><small>Mot de passe oublié ?</small></a>
-                                                    <label for="password" class="form-label text-dark">Mot de passe</label>
-                                                    <input class="form-control @error('password') is-invalid @enderror" name="password" type="password" required="" id="password"
-                                                        placeholder="Enter your password" >
-                                                </div>
-                                                @error('password')
-                                                    <div class="text-danger small mb-2">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-                                    
-                                            <div class="mb-3">
-                                                <div class="form-check">
-                                                    <input type="checkbox" class="form-check-input"
-                                                        id="checkbox-signin">
-                                                    <label class="form-check-label text-dark" for="checkbox-signin">Se rappeler de moi</label>
-                                                </div>
-                                            </div> --}}
-                                            <div class="mb-0 text-start">
-                                                <button class="btn btn-soft-primary w-100" type="submit"><i
-                                                        class="ri-login-circle-fill me-1"></i> <span class="fw-bold">Renitialiser</span> </button>
-                                            </div>
-
-                                             <div class="text-center mt-4">
-                                                <p class="text-dark-emphasis">Je me souviens de mon mot de passe <a href="{{ route('login') }}"
-                                                    class="text-primary-emphasis fw-bold ms-1 link-offset-3 text-decoration-underline"><b>Se connecter.</b></a>
-                                                </p>
-                                               
-                                            </div>
-
-                                            <div class="text-center mt-4">
-                                                <p class="text-dark-emphasis">Vous n'avez pas de compte? <a href="{{ route('contact_admin') }}"
-                                                    class="text-primary-emphasis fw-bold ms-1 link-offset-3 text-decoration-underline"><b>Contactez votre administrateur.</b></a>
-                                                </p>
-                                               
-                                            </div>
-                                        </form>
-                                        <!-- end form-->
+                                            <label for="password" class="form-label text-dark">Mot de passe</label>
+                                            <input class="form-control @error('password') is-invalid @enderror" name="password" type="password" required="" id="password" placeholder="Enter your password">
                                     </div>
+                                    @error('password')
+                                    <div class="text-danger small mb-2">{{ $message }}</div>
+                                    @enderror
                                 </div>
-                            </div> <!-- end col -->
+
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" id="checkbox-signin">
+                                        <label class="form-check-label text-dark" for="checkbox-signin">Se rappeler de moi</label>
+                                    </div>
+                                </div> --}}
+                                <div class="mb-0 text-start">
+                                    <button class="btn btn-soft-primary w-100" type="submit"><i class="ri-login-circle-fill me-1"></i> <span class="fw-bold">Renitialiser</span> </button>
+                                </div>
+
+                                <div class="text-center mt-4">
+                                    <p class="text-dark-emphasis">Je me souviens de mon mot de passe <a href="{{ route('login') }}" class="text-primary-emphasis fw-bold ms-1 link-offset-3 text-decoration-underline"><b>Se connecter.</b></a>
+                                    </p>
+
+                                </div>
+
+                                <div class="text-center mt-4">
+                                    <p class="text-dark-emphasis">Vous n'avez pas de compte? <a href="{{ route('contact_admin') }}" class="text-primary-emphasis fw-bold ms-1 link-offset-3 text-decoration-underline"><b>Contactez votre administrateur.</b></a>
+                                    </p>
+
+                                </div>
+                                </form>
+                                <!-- end form-->
+                            </div>
                         </div>
-                    </div>
+                    </div> <!-- end col -->
                 </div>
-                <!-- end row -->
             </div>
-            {{-- <div class="row">
+        </div>
+        <!-- end row -->
+    </div>
+    {{-- <div class="row">
                 <div class="col-12 text-center">
                     <p class="text-dark-emphasis">Don't have an account? <a href="auth-register.html"
                             class="text-dark fw-bold ms-1 link-offset-3 text-decoration-underline"><b>Sign up</b></a>
                     </p>
                 </div> <!-- end col -->
             </div> --}}
-            <!-- end row -->
-        </div>
-        <!-- end container -->
+    <!-- end row -->
+    </div>
+    <!-- end container -->
     </div>
     <!-- end page -->
 
     <footer class="footer footer-alt fw-medium">
         <span class="text-dark">
-            Firme informatique <script>document.write(new Date().getFullYear())</script> © Firme Attou Co
+            Firme informatique <script>
+                document.write(new Date().getFullYear())
+
+            </script> © Firme Attou Co
         </span>
     </footer>
     <!-- Vendor js -->

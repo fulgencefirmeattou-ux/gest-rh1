@@ -5,7 +5,7 @@
     <title>Réinitialiser le mot de passe</title>
 </head>
 <body>
-   
+
 </body>
 </html>
 
@@ -54,14 +54,14 @@
                                     </div>
                                     <div class="p-4 my-auto">
                                         @if (session('success'))
-                                            <div class="alert alert-success">
-                                                {{ session('success') }}
-                                            </div>
+                                        <div class="alert alert-success">
+                                            {{ session('success') }}
+                                        </div>
                                         @endif
                                         <h4 class="mb-2">Réinitialisation du mot de passe</h4>
 
                                         @if (session('status'))
-                                            <p style="color: green;">{{ session('status') }}</p>
+                                        <p style="color: green;">{{ session('status') }}</p>
                                         @endif
 
                                         <form method="POST" action="{{ route('password.update') }}">
@@ -70,31 +70,28 @@
                                             <div class="mb-3">
                                                 <div class="mb-1">
                                                     <label for="emailaddress" class="form-label text-dark">Votre Email</label>
-                                                    <input class="form-control @error('email') is-invalid @enderror" name="email" type="email" name="email" value="{{ request()->email ?? old('email') }}" required=""
-                                                        placeholder="Enter your email">
+                                                    <input class="form-control @error('email') is-invalid @enderror" name="email" type="email" name="email" value="{{ request()->email ?? old('email') }}" required="" placeholder="Enter your email">
                                                 </div>
                                                 @error('email')
-                                                    <div class="text-danger small mb-2">{{ $message }}</div>
+                                                <div class="text-danger small mb-2">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                             <div class="mb-3">
                                                 <div class="mb-1">
                                                     <label for="password" class="form-label text-dark">Mot de passe</label>
-                                                    <input class="form-control @error('password') is-invalid @enderror" name="password" type="password" required="" id="password"
-                                                        placeholder="Enter your password" >
+                                                    <input class="form-control @error('password') is-invalid @enderror" name="password" type="password" required="" id="password" placeholder="Enter your password">
                                                 </div>
                                                 @error('password')
-                                                    <div class="text-danger small mb-2">{{ $message }}</div>
+                                                <div class="text-danger small mb-2">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                             <div class="mb-3">
                                                 <div class="mb-1">
                                                     <label for="password" class="form-label text-dark">Confirmation de mot de passe</label>
-                                                    <input class="form-control @error('password') is-invalid @enderror" name="password_confirmation" type="password" required="" id="password"
-                                                        placeholder="Enter your password" >
+                                                    <input class="form-control @error('password') is-invalid @enderror" name="password_confirmation" type="password" required="" id="password" placeholder="Enter your password">
                                                 </div>
                                                 @error('password')
-                                                    <div class="text-danger small mb-2">{{ $message }}</div>
+                                                <div class="text-danger small mb-2">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                             <button class="btn btn-soft-primary w-100" type="submit">Réinitialiser</button>
@@ -102,11 +99,11 @@
 
 
                                         @if ($errors->any())
-                                            <ul style="color:red;">
-                                                @foreach ($errors->all() as $error)
-                                                    <li>{{ $error }}</li>
-                                                @endforeach
-                                            </ul>
+                                        <ul style="color:red;">
+                                            @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                            @endforeach
+                                        </ul>
                                         @endif
                                     </div>
                                 </div>
@@ -131,7 +128,10 @@
 
     <footer class="footer footer-alt fw-medium">
         <span class="text-dark">
-            Firme informatique <script>document.write(new Date().getFullYear())</script> © Firme Attou Co
+            Firme informatique <script>
+                document.write(new Date().getFullYear())
+
+            </script> © Firme Attou Co
         </span>
     </footer>
     <!-- Vendor js -->

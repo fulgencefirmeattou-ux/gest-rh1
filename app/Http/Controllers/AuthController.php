@@ -27,6 +27,9 @@ class AuthController extends Controller
             $request->validate([
                 'login' => 'required',
                 'password' => 'required'
+            ],[
+                'login.required' => 'Veuillez entrer votre login ou adresse e-mail.',
+                'password.required' => 'Veuillez entrer votre mot de passe.',
             ]);
 
             $loginInput = $request->login;
@@ -136,6 +139,11 @@ class AuthController extends Controller
                 'nom' => 'required|string',
                 'email' => 'required|email',
                 'message' => 'required|string',
+            ],[
+                'nom.required' => 'Veuillez entrer votre nom.',
+                'email.required' => 'Veuillez entrer votre adresse e-mail.',
+                'email.email' => 'L’adresse e-mail n’est pas valide.',
+                'message.required' => 'Veuillez entrer votre message.',
             ]);
 
             Mail::to('yabo.firm@gmail.com')->send(new ContactAdminMail($request->all()));
@@ -184,6 +192,13 @@ class AuthController extends Controller
             'token' => 'required',
             'email' => 'required|email',
             'password' => 'required|min:8|confirmed',
+        ],[
+            'token.required' => 'Le token de réinitialisation est manquant.',
+            'email.required' => 'Veuillez entrer votre adresse e-mail.',
+            'email.email' => 'L’adresse e-mail n’est pas valide.',
+            'password.required' => 'Veuillez entrer un nouveau mot de passe.',
+            'password.min' => 'Le mot de passe doit contenir au moins 8 caractères.',
+            'password.confirmed' => 'La confirmation du mot de passe ne correspond pas.',
         ]);
 
         // Réinitialisation du mot de passe

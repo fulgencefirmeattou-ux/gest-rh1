@@ -42,77 +42,92 @@
                                         </a>
                                     </div>
                                     <div class="p-4 my-auto">
-                                        @if (session('success'))
-                                            <div class="alert alert-success">
-                                                {{ session('success') }}
-                                            </div>
-                                        @endif
-                                        <h4 class="fs-20 text-dark">Contactez l'administrateur</h4>
-                                        <p class="text-muted mb-3">Entrer votre demande de création de compte</p>
-                                        
-
-                                        <!-- form -->
-                                        <form action="{{ route('contact.admin') }}" method="POST">
-                                            @csrf
-                                           <div class="mb-3">
-                                                <label for="nom" class="form-label text-dark">Nom</label>
-                                                <input type="text" name="nom" id="nom" class="form-control" value="{{ old('nom') }}" required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <div class="mb-1">
-                                                    <label for="emailaddress" class="form-label text-dark">Votre Email</label>
-                                                    <input class="form-control @error('email') is-invalid @enderror" name="email" type="email" id="emailaddress"  value="{{ old('email') }}" required=""
-                                                        placeholder="Enter your email">
-                                                </div>
-                                                {{-- @error('email')
-                                                    <div class="text-danger small mb-2">{{ $message }}</div>
-                                                @enderror --}}
-                                            </div>
-                                            <div class="mb-3">
-                                                <div class="mb-1">
-                                                    <label for="message" class="form-label text-dark">Votre message</label>
-                                                    <textarea name="message" class="form-label text-dark w-100" placeholder="Expliquez votre demande..." required></textarea>
-                                                </div>
-                                                {{-- @error('email')
-                                                    <div class="text-danger small mb-2">{{ $message }}</div>
-                                                @enderror --}}
-                                            </div>
-                                            
-                                            <button class="btn btn-soft-primary w-100"  type="submit">Contacter l’administrateur</button>
-                                        </form>
-
-                                        <!-- end form-->
-
-                                        <div class="text-center mt-4">
-                                            <p class="text-dark-emphasis">Vous avez un compte? <a href="{{ route('login') }}"
-                                                    class="text-primary-emphasis fw-bold ms-1 link-offset-3 text-decoration-underline"><b>Je me connecte.</b></a>
-                                            </p>
-                                            
-                                        </div>
+                                       
+                                    @if (session('success'))
+                                    <div class="alert alert-success">
+                                        {{ session('success') }}
                                     </div>
+                                    @endif
+                                    
+                                    @if ($errors->any())
+                                    <div class="alert alert-danger">
+                                        <ul class="mb-0">
+                                            @foreach ($errors->all() as $error)
+                                                <li>{{ $error }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                    @endif
+
+                                    <h4 class="fs-20 text-dark">Contactez l'administrateur</h4>
+                                    <p class="text-muted mb-3">Entrer votre demande de création de compte</p>
+
+
+                                    <!-- form -->
+                                    <form action="{{ route('contact.admin') }}" method="POST">
+                                        @csrf
+                                        <div class="mb-3">
+                                            <label for="nom" class="form-label text-dark">Nom</label>
+                                            <input type="text" name="nom" id="nom" class="form-control" value="{{ old('nom') }}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="mb-1">
+                                                <label for="emailaddress" class="form-label text-dark">Votre Email</label>
+                                                <input class="form-control @error('email') is-invalid @enderror" name="email" type="email" id="emailaddress" value="{{ old('email') }}" placeholder="Enter your email">
+                                            </div>
+                                            {{-- @error('email')
+                                                    <div class="text-danger small mb-2">{{ $message }}
+                                        </div>
+                                        @enderror --}}
                                 </div>
-                            </div> <!-- end col -->
+                                <div class="mb-3">
+                                    <div class="mb-1">
+                                        <label for="message" class="form-label text-dark">Votre message</label>
+                                        <textarea name="message" class="form-label text-dark w-100" placeholder="Expliquez votre demande...">{{ old('message') }}</textarea>
+                                    </div>
+                                    {{-- @error('email')
+                                                    <div class="text-danger small mb-2">{{ $message }}
+                                </div>
+                                @enderror --}}
+                            </div>
+
+                            <button class="btn btn-soft-primary w-100" type="submit">Contacter l’administrateur</button>
+                            </form>
+
+                            <!-- end form-->
+
+                            <div class="text-center mt-4">
+                                <p class="text-dark-emphasis">Vous avez un compte? <a href="{{ route('login') }}" class="text-primary-emphasis fw-bold ms-1 link-offset-3 text-decoration-underline"><b>Je me connecte.</b></a>
+                                </p>
+
+                            </div>
                         </div>
                     </div>
-                </div>
-                <!-- end row -->
+                </div> <!-- end col -->
             </div>
-            {{-- <div class="row">
+        </div>
+    </div>
+    <!-- end row -->
+    </div>
+    {{-- <div class="row">
                 <div class="col-12 text-center">
                     <p class="text-dark-emphasis">Don't have an account? <a href="auth-register.html"
                             class="text-dark fw-bold ms-1 link-offset-3 text-decoration-underline"><b>Sign up</b></a>
                     </p>
                 </div> <!-- end col -->
             </div> --}}
-            <!-- end row -->
-        </div>
-        <!-- end container -->
+    <!-- end row -->
+    </div>
+    <!-- end container -->
     </div>
     <!-- end page -->
 
     <footer class="footer footer-alt fw-medium">
         <span class="text-dark">
-            Firme informatique <script>document.write(new Date().getFullYear())</script> © Firme Attou Co
+            Firme informatique <script>
+                document.write(new Date().getFullYear())
+
+            </script> © Firme Attou Co
         </span>
     </footer>
     <!-- Vendor js -->
